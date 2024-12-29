@@ -44,57 +44,29 @@ class _MainScreenState extends State<MainScreen> {
     {'name': 'Product 11', 'image': 'https://via.placeholder.com/100'},
     {'name': 'Product 12', 'image': 'https://via.placeholder.com/100'},
   ];
-  // List<dynamic> products = []; // Assuming the API returns a list of products
-  // List<dynamic> stores = []; // Assuming the API returns a list of products
-  // Future<void> fetchData() async {
-  //   final response = await http.get(Uri.parse('http://192.168.201.103:8000/api/products'));
-  //
-  //   if (response.statusCode == 200) {
-  //     // Decode JSON response into a Map or List
-  //     final jsonData = jsonDecode(response.body); // This converts the JSON string into a Dart object
-  //
-  //     // Access the data property (if your API returns it in a field called "data")
-  //     products = jsonData['data'];
-  //
-  //     print(products); // Now 'products' contains the list of product data
-  //   } else {
-  //     print('Failed to fetch data');
-  //   }
-  // }
-  // Future<void> fetchData2() async {
-  //   final response = await http.get(Uri.parse('http://192.168.201.103:8000/api/stores'));
-  //
-  //   if (response.statusCode == 200) {
-  //     // Decode JSON response into a Map or List
-  //     final jsonData = jsonDecode(response.body); // This converts the JSON string into a Dart object
-  //
-  //     // Access the data property (if your API returns it in a field called "data")
-  //     stores = jsonData['data'];
-  //
-  //     print(stores); // Now 'products' contains the list of product data
-  //   } else {
-  //     print('Failed to fetch data');
-  //   }
-  // }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
   List<Widget> screens = [
-    homeScreen(),
+    HomeScreen(),
     storesScreen(),
     ProductScreen(),
     FavoritesScreen(),
   ];
+  List<String> Titles = [
+    "Main page",
+    "Stores page",
+    "product page",
+    "Favorites page",
+  ];
   @override
-  Widget build(BuildContext context) {
-    // fetchData2();
-    // fetchData();
+    Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFFFF950),
-        leading: IconButton(
+        leading: _selectedIndex == 0 ?null :IconButton(
           icon: Icon(Icons.search, color: Colors.black),
           onPressed: () {},
         ),

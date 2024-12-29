@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -59,20 +59,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   File? _selectedImage;
 
-  Future<void> _pickImage() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
-
-    if (result != null && result.files.single.path != null) {
-      setState(() {
-        _selectedImage = File(result.files.single.path!);
-      });
-      print("Image Path: ${_selectedImage!.path}"); // Debugging statement
-    } else {
-      print("No image selected");
-    }
-  }
+  // Future<void> _pickImage() async {
+  //   final result = await FilePicker.platform.pickFiles(
+  //     type: FileType.image,
+  //   );
+  //
+  //   if (result != null && result.files.single.path != null) {
+  //     setState(() {
+  //       _selectedImage = File(result.files.single.path!);
+  //     });
+  //     print("Image Path: ${_selectedImage!.path}"); // Debugging statement
+  //   } else {
+  //     print("No image selected");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -315,42 +315,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ));
 
   }
-  Widget imageProfile() {
-    return Center(
-      child: GestureDetector(
-        onTap: _pickImage, // Trigger image picking when tapped
-        child: Container(
-          width: 210, // Circle container width
-          height: 210, // Circle container height
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.black, // Border color
-              width: 1.0, // Border width
-            ),
-          ),
-          child: _selectedImage == null
-              ? CircleAvatar(
-            radius: 100, // CircleAvatar size
-            backgroundColor: Color(0xFFA4FDAA), // Green background
-            child: Icon(
-              Icons.person, // Default icon when no image is selected
-              size: 100, // Icon size
-              color: Colors.white, // Icon color
-            ),
-          )
-              : ClipOval(
-            child: Image.file(
-              _selectedImage!, // Ensure the selected file is loaded
-              width: 210, // Image width matches container
-              height: 210, // Image height matches container
-              fit: BoxFit.cover, // Ensures image covers the circle
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget imageProfile() {
+  //   return Center(
+  //     child: GestureDetector(
+  //       onTap: _pickImage, // Trigger image picking when tapped
+  //       child: Container(
+  //         width: 210, // Circle container width
+  //         height: 210, // Circle container height
+  //         decoration: BoxDecoration(
+  //           shape: BoxShape.circle,
+  //           border: Border.all(
+  //             color: Colors.black, // Border color
+  //             width: 1.0, // Border width
+  //           ),
+  //         ),
+  //         child: _selectedImage == null
+  //             ? CircleAvatar(
+  //           radius: 100, // CircleAvatar size
+  //           backgroundColor: Color(0xFFA4FDAA), // Green background
+  //           child: Icon(
+  //             Icons.person, // Default icon when no image is selected
+  //             size: 100, // Icon size
+  //             color: Colors.white, // Icon color
+  //           ),
+  //         )
+  //             : ClipOval(
+  //           child: Image.file(
+  //             _selectedImage!, // Ensure the selected file is loaded
+  //             width: 210, // Image width matches container
+  //             height: 210, // Image height matches container
+  //             fit: BoxFit.cover, // Ensures image covers the circle
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
 

@@ -1,49 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class homeScreen extends StatefulWidget {
-  const homeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<homeScreen> createState() => _homeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _homeScreenState extends State<homeScreen> {
-  final List<Map<String, String>> stores = [
-    {'name': 'Store 1', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 2', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 3', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 4', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 5', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 6', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 7', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 8', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 9', 'image': 'https://via.placeholder.com/150'},
-  ];
+class _HomeScreenState extends State<HomeScreen> {
+  List<dynamic> products = [];
+  List<dynamic> stores = [];
+  bool isLoading = true; // To handle loading state
 
-  final List<Map<String, String>> products = [
-    {'name': 'Product 1', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 2', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 3', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 4', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 5', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 6', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 7', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 8', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 9', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 10', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 11', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 12', 'image': 'https://via.placeholder.com/100'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+    fetchData2();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      final response = await http.get(Uri.parse('http://172.20.10.4:8000/api/products'));
+      if (response.statusCode == 200) {
+        print(response.body);
+        final jsonData = jsonDecode(response.body);
+        setState(() {
+          products = jsonData['data'];
+        });
+      } else {
+        print('Failed to fetch products');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+  }
+  String constructImageUrl(String relativePath) {
+    const baseUrl = 'http://172.20.10.4:8000/';
+    print(baseUrl + relativePath);
+    return baseUrl + relativePath;
+
+
+  }
+  Future<void> fetchData2() async {
+    try {
+      final response = await http.get(Uri.parse('http://172.20.10.4:8000/api/stores'));
+      if (response.statusCode == 200) {
+        print(response.body);
+        final jsonData = jsonDecode(response.body);
+        setState(() {
+          stores = jsonData['data'];
+        });
+      } else {
+        print('Failed to fetch stores');
+      }
+    } catch (e) {
+      print('Error fetching stores: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Stop loading
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
           // Display Stores in a Horizontal List
           SizedBox(
-            height: 150, // Set a fixed height for the horizontal list
+            height: 150,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: stores.length,
@@ -54,14 +90,15 @@ class _homeScreenState extends State<homeScreen> {
                     child: Column(
                       children: [
                         Image.network(
-                          stores[index]['image']!,
+                          stores[index]['image'] ?? '',
                           height: 100,
                           width: 100,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
                         ),
                         SizedBox(height: 5),
                         Text(
-                          stores[index]['name']!,
+                          stores[index]['name'] ?? '',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -71,7 +108,7 @@ class _homeScreenState extends State<homeScreen> {
               },
             ),
           ),
-          SizedBox(height: 10), // Add spacing between Stores and Products
+          SizedBox(height: 10),
           // Display Products in a Grid
           Expanded(
             child: GridView.builder(
@@ -85,14 +122,15 @@ class _homeScreenState extends State<homeScreen> {
                 return Card(
                   child: Column(
                     children: [
-                      // Image.network(
-                      //   products[index]['image']!,
-                      //   height: 70,
-                      //   fit: BoxFit.cover,
-                      // ),
+                      Image.network(
+                        constructImageUrl(products[index]['image'] ?? ''),
+                        height: 70,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+                      ),
                       SizedBox(height: 5),
                       Text(
-                        products[index]['name']!,
+                        products[index]['name'] ?? '',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
