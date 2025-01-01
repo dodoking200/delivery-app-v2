@@ -6,11 +6,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatefulWidget {
-
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
+
 final _formKey = GlobalKey<FormState>();
+
 class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> sendPostRequest() async {
     // Define the URL of your API
@@ -18,8 +19,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // Define the headers
     final headers = {
-      'Content-Type': 'application/json', // Ensures you're sending JSON
-      'Authorization': 'Bearer your_token_here', // Replace with your actual token
+      'Content-Type': 'application/json',
+      // Ensures you're sending JSON
+      'Authorization': 'Bearer your_token_here',
+      // Replace with your actual token
     };
 
     // Define the body (if you're sending data)
@@ -51,6 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       print('Error occurred: $e');
     }
   }
+
   final firstController = TextEditingController();
   final lastController = TextEditingController();
   final phoneController = TextEditingController();
@@ -81,13 +85,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: Color(0xFFFFF950),
           title: Center(
               child: Text(
-                'login',
-                style: TextStyle(
-                    color: Colors.grey, fontSize: 30.0, letterSpacing: 7.0),
-              )),
+            'login',
+            style: TextStyle(
+                color: Colors.grey, fontSize: 30.0, letterSpacing: 7.0),
+          )),
         ),
         body: Padding(
-          padding: const EdgeInsets.fromLTRB(20.0,40.0,20.0,40.0),
+          padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -101,7 +105,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: firstController,
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.center,
-
                     style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
@@ -139,7 +142,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: lastController,
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.center,
-
                     style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
@@ -288,15 +290,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Container(
                     height: 40.0,
                     width: double.infinity,
-                    decoration: BoxDecoration(color: Colors.blue,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
                       borderRadius: BorderRadius.all(Radius.circular(16.0)),
                     ),
                     child: MaterialButton(
-
-                      child: Text(
-                          'Submit'
-                      ),
-                      onPressed: (){
+                      child: Text('Submit'),
+                      onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           sendPostRequest();
                         }
@@ -308,52 +308,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ),
-
         bottomNavigationBar: BottomAppBar(
           color: Color(0xFFFFF950),
-          child: Container(height: 50.0, ),
+          child: Container(
+            height: 50.0,
+          ),
         ));
-
   }
-  // Widget imageProfile() {
-  //   return Center(
-  //     child: GestureDetector(
-  //       onTap: _pickImage, // Trigger image picking when tapped
-  //       child: Container(
-  //         width: 210, // Circle container width
-  //         height: 210, // Circle container height
-  //         decoration: BoxDecoration(
-  //           shape: BoxShape.circle,
-  //           border: Border.all(
-  //             color: Colors.black, // Border color
-  //             width: 1.0, // Border width
-  //           ),
-  //         ),
-  //         child: _selectedImage == null
-  //             ? CircleAvatar(
-  //           radius: 100, // CircleAvatar size
-  //           backgroundColor: Color(0xFFA4FDAA), // Green background
-  //           child: Icon(
-  //             Icons.person, // Default icon when no image is selected
-  //             size: 100, // Icon size
-  //             color: Colors.white, // Icon color
-  //           ),
-  //         )
-  //             : ClipOval(
-  //           child: Image.file(
-  //             _selectedImage!, // Ensure the selected file is loaded
-  //             width: 210, // Image width matches container
-  //             height: 210, // Image height matches container
-  //             fit: BoxFit.cover, // Ensures image covers the circle
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-
-
-
-
+// Widget imageProfile() {
+//   return Center(
+//     child: GestureDetector(
+//       onTap: _pickImage, // Trigger image picking when tapped
+//       child: Container(
+//         width: 210, // Circle container width
+//         height: 210, // Circle container height
+//         decoration: BoxDecoration(
+//           shape: BoxShape.circle,
+//           border: Border.all(
+//             color: Colors.black, // Border color
+//             width: 1.0, // Border width
+//           ),
+//         ),
+//         child: _selectedImage == null
+//             ? CircleAvatar(
+//           radius: 100, // CircleAvatar size
+//           backgroundColor: Color(0xFFA4FDAA), // Green background
+//           child: Icon(
+//             Icons.person, // Default icon when no image is selected
+//             size: 100, // Icon size
+//             color: Colors.white, // Icon color
+//           ),
+//         )
+//             : ClipOval(
+//           child: Image.file(
+//             _selectedImage!, // Ensure the selected file is loaded
+//             width: 210, // Image width matches container
+//             height: 210, // Image height matches container
+//             fit: BoxFit.cover, // Ensures image covers the circle
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
 }

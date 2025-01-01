@@ -3,6 +3,8 @@ import 'Register_Screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'main_screen.dart';
+
 final _formKey = GlobalKey<FormState>();
 
 class LoginScreen extends StatefulWidget {
@@ -16,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
   Future<void> sendPostRequest() async {
     // Define the URL of your API
-    final url = Uri.parse('http://192.168.201.103:8000/api/login');
+    final url = Uri.parse('http://172.20.10.4:8000/api/login');
 
     // Define the headers
     final headers = {
@@ -40,6 +42,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Check the response
       if (response.statusCode == 200 || response.statusCode == 201) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => MainScreen()),
+              (Route<dynamic> route) => false,
+        );
+
         print('Success: ${response.body}');
       } else {
         print('Failed with status: ${response.statusCode}');
@@ -206,6 +213,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: Text('Register now'),
+                      ),TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => MainScreen()),
+                                (Route<dynamic> route) => false,
+                          );
+                        },
+                        child: Text('Skip'),
                       ),
                     ],
                   ),

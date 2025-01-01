@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test1/Product_Page_Screen.dart';
 
 class storesScreen extends StatefulWidget {
   @override
@@ -63,41 +64,48 @@ class ShowBox extends StatelessWidget{
   ShowBox({this.name,this.image});
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          border: Border.all(
-            width: 1
-          )
-        ),
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Image(
-                image: AssetImage(image!),
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 200.0,
-            ),
-            Container(
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => ProductPageScreen()),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+            border: Border.all(
+              width: 1
+            )
+          ),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Image(
+                  image: AssetImage(image!),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 200.0,
+              ),
+              Container(
 
-                width: double.infinity,
-                color: Color(0x70000000),
-                child: Text(
-                  textAlign: TextAlign.center,
-                    name!,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+                  width: double.infinity,
+                  color: Color(0x70000000),
+                  child: Text(
+                    textAlign: TextAlign.center,
+                      name!,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
 
-                  ),
-                )
+                    ),
+                  )
 
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
