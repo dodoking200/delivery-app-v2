@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test1/Card_Screen.dart';
+import 'package:test1/Favorites_Screen.dart';
 import 'package:test1/Order_Screen.dart';
 import 'package:test1/Product_Screen.dart';
 import 'package:test1/Stores_Screen.dart';
+import 'package:test1/User_Screen.dart';
 import 'package:test1/homeScreen.dart';
 
 // import 'package:http/http.dart' as http;
@@ -73,7 +75,9 @@ class _MainScreenState extends State<MainScreen> {
             ? null
             : IconButton(
                 icon: Icon(Icons.search, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+
+                },
               ),
         title: Text(
           'Main Page',
@@ -82,7 +86,11 @@ class _MainScreenState extends State<MainScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.favorite, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => FavoritesScreen()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(Icons.shopping_cart, color: Colors.black),
@@ -94,7 +102,11 @@ class _MainScreenState extends State<MainScreen> {
           ),
           IconButton(
             icon: Icon(Icons.account_circle, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => UserScreen()),
+              );
+            },
           ),
         ],
       ),

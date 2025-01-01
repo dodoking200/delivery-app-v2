@@ -15,20 +15,6 @@ class _storesScreenState extends State<storesScreen> {
     {'name': 'Store 5', 'image': 'assets/images/product1.jpg'},
     {'name': 'Store 6', 'image': 'assets/images/product1.jpg'},
     {'name': 'Store 7', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 8', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 9', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 10', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 11', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 12', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 13', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 14', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 15', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 16', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 17', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 18', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 19', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 20', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Store 1', 'image': 'assets/images/product1.jpg'},
   ];
   List<Widget> sma= [];
   @override
