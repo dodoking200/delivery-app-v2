@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'main.dart';
+
 class RegisterScreen extends StatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -15,7 +17,7 @@ final _formKey = GlobalKey<FormState>();
 class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> sendPostRequest() async {
     // Define the URL of your API
-    final url = Uri.parse('http://192.168.201.103:8000/api/register');
+    final url = Uri.parse(constructImageUrl('api/register'));
 
     // Define the headers
     final headers = {
@@ -309,10 +311,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-          color: Color(0xFFFFF950),
-          child: Container(
-            height: 50.0,
-          ),
+          color: Colors.yellow,
+          child: Container(),
         ));
   }
 // Widget imageProfile() {

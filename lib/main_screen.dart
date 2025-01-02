@@ -62,16 +62,16 @@ class _MainScreenState extends State<MainScreen> {
   List<String> Titles = [
     "Main page",
     "Stores page",
-    "product page",
-    "Favorites page",
+    "Product page",
+    "Orders page",
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFF950),
-        leading: _selectedIndex == 0
+        backgroundColor:  Colors.yellow,
+        leading: _selectedIndex == 0 || _selectedIndex == 3
             ? null
             : IconButton(
                 icon: Icon(Icons.search, color: Colors.black),
@@ -80,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
                 },
               ),
         title: Text(
-          'Main Page',
+          Titles[_selectedIndex],
           style: TextStyle(color: Colors.black),
         ),
         actions: [
@@ -130,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Orders',
           ),
         ],
-        backgroundColor: Color(0xFFFFF950),
+        backgroundColor:  Colors.yellow,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
         // Prevents shifting behavior

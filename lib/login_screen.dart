@@ -3,6 +3,7 @@ import 'Register_Screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'main.dart';
 import 'main_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -18,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
   Future<void> sendPostRequest() async {
     // Define the URL of your API
-    final url = Uri.parse('http://172.20.10.4:8000/api/login');
+    final url = Uri.parse(constructImageUrl('api/login'));
 
     // Define the headers
     final headers = {
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFF950),
+        backgroundColor: Colors.yellow,
         title: Center(
           child: Text(
             'Login',
@@ -231,8 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Color(0xFFFFF950),
-        child: Container(height: 50.0, ),
+        color:  Colors.yellow,
+        child: Container()
       ),
     );
   }

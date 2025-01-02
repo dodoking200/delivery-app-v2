@@ -4,7 +4,13 @@ import 'package:test1/main_screen.dart';
 
 import 'Product_Page_Screen.dart';
 
+String constructImageUrl(String relativePath) {
+  const baseUrl = 'http://192.168.201.103:8000/';
+  print(baseUrl + relativePath);
+  return baseUrl + relativePath;
 
+
+}
 
 void main() {
   runApp(const MyApp());

@@ -84,7 +84,7 @@ class _CardScreenState extends State<CardScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.yellow,
-        title: const Text('Orders'),
+        title: const Text('cart'),
         centerTitle: true,
       ),
       body: ListView.builder(

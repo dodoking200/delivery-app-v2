@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'main.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse('http://172.20.10.4:8000/api/products'));
+      final response = await http.get(Uri.parse(constructImageUrl('api/products')));
       if (response.statusCode == 200) {
         print(response.body);
         final jsonData = jsonDecode(response.body);
@@ -37,16 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error fetching products: $e');
     }
   }
-  String constructImageUrl(String relativePath) {
-    const baseUrl = 'http://172.20.10.4:8000/';
-    print(baseUrl + relativePath);
-    return baseUrl + relativePath;
-
-
-  }
   Future<void> fetchData2() async {
     try {
-      final response = await http.get(Uri.parse('http://172.20.10.4:8000/api/stores'));
+      final response = await http.get(Uri.parse(constructImageUrl('api/stores')));
       if (response.statusCode == 200) {
         print(response.body);
         final jsonData = jsonDecode(response.body);
@@ -90,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         Image.network(
-                          stores[index]['image'] ?? '',
+                          constructImageUrl(stores[index]['image'] ?? ''),
                           height: 100,
                           width: 100,
                           fit: BoxFit.cover,

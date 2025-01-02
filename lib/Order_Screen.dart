@@ -94,7 +94,6 @@ class _OrderScreenState extends State<OrderScreen> {
                 name: order['name']!,
                 image: order['image']!,
                 count: order['count']!,
-                onEdit: () => _showEditDialog(index),
                 onDelete: () => _showDeleteDialog(index),
               ),
               const SizedBox(height: 10.0),
@@ -110,14 +109,12 @@ class OrderItem extends StatelessWidget {
   final String name;
   final String image;
   final String count;
-  final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const OrderItem({
     required this.name,
     required this.image,
     required this.count,
-    required this.onEdit,
     required this.onDelete,
     Key? key,
   }) : super(key: key);
@@ -153,7 +150,7 @@ class OrderItem extends StatelessWidget {
             flex: 4,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   name,
@@ -174,27 +171,12 @@ class OrderItem extends StatelessWidget {
           ),
           Expanded(
             flex: 3,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: onEdit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                  ),
-                  child: const Text('Edit'),
-                ),
-                IconButton(
-                  onPressed: onDelete,
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
+            child: IconButton(
+              onPressed: onDelete,
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
             ),
           ),
         ],

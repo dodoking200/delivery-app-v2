@@ -56,42 +56,39 @@ class ShowBox extends StatelessWidget{
           MaterialPageRoute(builder: (context) => ProductPageScreen()),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-            border: Border.all(
-              width: 1
-            )
-          ),
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Image(
-                  image: AssetImage(image!),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 200.0,
-              ),
-              Container(
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          border: Border.all(
+            width: 1
+          )
+        ),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Image(
+                image: AssetImage(image!),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 200.0,
+            ),
+            Container(
 
-                  width: double.infinity,
-                  color: Color(0x70000000),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                      name!,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
+                width: double.infinity,
+                color: Color(0x70000000),
+                child: Text(
+                  textAlign: TextAlign.center,
+                    name!,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
 
-                    ),
-                  )
+                  ),
+                )
 
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -108,24 +105,30 @@ class ShowTwoBoxes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 1, // Always occupies half of the screen width
-          child: ShowBox(
-            name: name1,
-            image: image1,
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1, // Always occupies half of the screen width
+            child: ShowBox(
+              name: name1,
+              image: image1,
+            ),
           ),
-        ),
-        Expanded(
-          flex: 1,
-          child: name2 != null && image2 != null? ShowBox(
-            name: name2,
-            image: image2,
-          )
-              : SizedBox(),
-        ),
-      ],
+          SizedBox(
+            width: 20.0,
+          ),
+          Expanded(
+            flex: 1,
+            child: name2 != null && image2 != null? ShowBox(
+              name: name2,
+              image: image2,
+            )
+                : SizedBox(),
+          ),
+        ],
+      ),
     );
   }
 }
