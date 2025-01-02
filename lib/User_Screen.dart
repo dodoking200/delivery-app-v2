@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:test1/login_screen.dart';
 
+import 'Token_Secure_Storage.dart';
+
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
 }
+void removetoken() async {
+  TokenSecureStorage storage = TokenSecureStorage();
+
+  await TokenSecureStorage.removeToken();
+}
+
 final Map<String, String> user = {
   'first_name': 'ghaith',
   'last_name': 'aljabban',
@@ -61,6 +69,7 @@ class _UserScreenState extends State<UserScreen> {
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
+                  removetoken();
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                         (Route<dynamic> route) => false,

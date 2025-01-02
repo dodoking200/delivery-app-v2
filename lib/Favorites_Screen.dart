@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 
+import 'Token_Secure_Storage.dart';
+
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
+
+
 
   @override
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
+Future<void> token() async {
+  TokenSecureStorage storage = TokenSecureStorage();
+
+  String? token = await TokenSecureStorage.getToken();
+  print('Retrieved Token: $token');
+}
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
+
   final List<Map<String, String>> orders = [
     {'name': 'Product 1', 'image': 'assets/images/product3.jpg'},
     {'name': 'Product 2', 'image': 'assets/images/product2.jpg'},
@@ -44,6 +55,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    token();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.yellow,

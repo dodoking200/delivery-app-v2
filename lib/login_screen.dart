@@ -3,6 +3,7 @@ import 'Register_Screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'Token_Secure_Storage.dart';
 import 'main.dart';
 import 'main_screen.dart';
 
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       'mobile_number': phoneController.text,
       'password': passwordController.text,
     });
+
     try {
       // Send POST request
       final response = await http.post(
@@ -44,12 +46,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Check the response
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Navigate to the main screen
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const MainScreen()),
               (Route<dynamic> route) => false,
         );
 
-        print('Success: ${response.body}');
+        // Save the token securely using the static method
+        String token = jsonDecode(response.body)['token'].toString();  // Ensure token is a string
+        await TokenSecureStorage.saveToken(token);
+        print('Success: $token');
       } else {
         print('Failed with status: ${response.statusCode}');
         print('Response: ${response.body}');
@@ -58,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Error occurred: $e');
     }
   }
+
 
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
