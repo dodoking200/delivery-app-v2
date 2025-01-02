@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test1/login_screen.dart';
+import 'package:test1/Token_Secure_Storage.dart';
 
+import 'main_screen.dart';
 
 String constructImageUrl(String relativePath) {
   const baseUrl = 'http://192.168.201.103:8000/';
@@ -18,8 +20,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: LoginScreen(),
+    return MaterialApp(
+      home: TokenSecureStorage.hasToken() == false ? LoginScreen():MainScreen(),
     );
   }
 }

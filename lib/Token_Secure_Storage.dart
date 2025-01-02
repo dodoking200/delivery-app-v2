@@ -33,4 +33,9 @@ String? token =  await _secureStorage.read(key: 'token');
     await _secureStorage.delete(key: 'token');
 
   }
+
+  static Future<bool> hasToken() async {
+    String? token = await getToken();
+    return token != null && token.isNotEmpty;
+  }
 }

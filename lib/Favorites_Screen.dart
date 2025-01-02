@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'Token_Secure_Storage.dart';
+import 'main.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -19,13 +22,22 @@ Future<void> token() async {
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
 
-  final List<Map<String, String>> orders = [
-    {'name': 'Product 1', 'image': 'assets/images/product3.jpg'},
-    {'name': 'Product 2', 'image': 'assets/images/product2.jpg'},
-    {'name': 'Product 3', 'image': 'assets/images/product1.jpg'},
-    {'name': 'Product 4', 'image': 'assets/images/product4.jpg'},
-    {'name': 'Product 5', 'image': 'assets/images/product5.jpg'},
-  ];
+  List<dynamic> favorites = [];
+  Future<void> fetchData() async {
+    try {
+      final response = await http.get(Uri.parse(constructImageUrl('api/favorites')));
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        setState(() {
+          favorites = jsonData['data'];
+        });
+      } else {
+        print('Failed to fetch products');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+  }
 
   void _showDeleteDialog(int index) {
     showDialog(
@@ -41,7 +53,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                orders.removeAt(index);
+                favorites.removeAt(index);
               });
               Navigator.of(context).pop();
             },
@@ -63,9 +75,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         centerTitle: true,
       ),
       body: ListView.builder(
-        itemCount: orders.length,
+        itemCount: favorites.length,
         itemBuilder: (context, index) {
-          final order = orders[index];
+          final favorite = favorites[index];
           return Column(
             children: [
               Container(
@@ -81,8 +93,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           height: 80.0,
                           clipBehavior: Clip.hardEdge,
                           decoration: const BoxDecoration(shape: BoxShape.circle),
-                          child: Image(
-                            image: AssetImage(order['image']!),
+                          child: Image.network(
+                            constructImageUrl(favorite['image']!),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -90,7 +102,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        order['name']!,
+                        favorite['name']!,
                         style: const TextStyle(
                           fontSize: 30.0,
                         ),
