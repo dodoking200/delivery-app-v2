@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'main.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -84,8 +86,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xFFFFF950),
-          title: Center(
+          backgroundColor: const Color(0xFFFFF950),
+          title: const Center(
               child: Text(
             'login',
             style: TextStyle(
@@ -100,14 +102,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 children: [
                   // imageProfile(),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   TextFormField(
                     controller: firstController,
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
                     ),
@@ -119,7 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       return null; // Return null if validation passes
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFA4FDAA),
                       border: OutlineInputBorder(
@@ -137,14 +139,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   TextFormField(
                     controller: lastController,
                     keyboardType: TextInputType.text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
                     ),
@@ -156,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       return null; // Return null if validation passes
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFA4FDAA),
                       border: OutlineInputBorder(
@@ -174,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   TextFormField(
@@ -182,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     maxLength: 10,
                     keyboardType: TextInputType.phone,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
                     ),
@@ -196,7 +198,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       return null; // Return null if validation passes
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFA4FDAA),
                       border: OutlineInputBorder(
@@ -214,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 7.0,
                   ),
                   TextFormField(
@@ -227,11 +229,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       return null; // Return null if validation passes
                     },
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
                     ),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFA4FDAA),
                       border: OutlineInputBorder(
@@ -249,7 +251,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   TextFormField(
@@ -264,11 +266,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                       return null; // Return null if validation passes
                     },
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20.0,
                       color: Colors.black,
                     ),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       filled: true,
                       fillColor: Color(0xFFA4FDAA),
                       border: OutlineInputBorder(
@@ -286,18 +288,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30.0,
                   ),
                   Container(
                     height: 40.0,
                     width: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.all(Radius.circular(16.0)),
                     ),
                     child: MaterialButton(
-                      child: Text('Submit'),
+                      child: const Text('Submit'),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           sendPostRequest();

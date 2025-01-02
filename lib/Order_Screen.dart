@@ -116,8 +116,8 @@ class OrderItem extends StatelessWidget {
     required this.image,
     required this.count,
     required this.onDelete,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

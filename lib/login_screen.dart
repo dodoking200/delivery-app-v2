@@ -9,6 +9,8 @@ import 'main_screen.dart';
 final _formKey = GlobalKey<FormState>();
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -32,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
       'mobile_number': phoneController.text,
       'password': passwordController.text,
     });
-    print(body);
     try {
       // Send POST request
       final response = await http.post(
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Check the response
       if (response.statusCode == 200 || response.statusCode == 201) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => MainScreen()),
+          MaterialPageRoute(builder: (context) => const MainScreen()),
               (Route<dynamic> route) => false,
         );
 
@@ -65,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.yellow,
-        title: Center(
+        title: const Center(
           child: Text(
             'Login',
             style: TextStyle(
@@ -80,13 +81,13 @@ class _LoginScreenState extends State<LoginScreen> {
             key: _formKey,  // Use the form key here
             child: Column(
               children: [
-                Center(
+                const Center(
                   child: Text(
                     'Welcome',
                     style: TextStyle(fontSize: 30.0, letterSpacing: 7.0),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30.0,
                 ),
                 TextFormField(
@@ -104,11 +105,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                     return null; // Return null if validation passes
                   },
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.black,
                   ),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     filled: true,
                     fillColor: Color(0xFFA4FDAA),
                     border: OutlineInputBorder(
@@ -126,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                 ),
                 TextFormField(
@@ -134,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscureText,
                   keyboardType: TextInputType.text,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.black,
                   ),
@@ -148,16 +149,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color(0xFFA4FDAA),
-                    border: OutlineInputBorder(
+                    fillColor: const Color(0xFFA4FDAA),
+                    border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(16.0)),
                     ),
-                    focusedBorder: OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.green, width: 2.0),
                       borderRadius: BorderRadius.all(Radius.circular(16.0)),
                     ),
                     hintText: 'Password',
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       fontSize: 20.0,
                       color: Colors.grey,
                       letterSpacing: 2.0,
@@ -177,19 +178,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30.0,
                 ),
                 Container(
                   height: 40.0,
 
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.all(Radius.circular(16.0)),
                   ),
                   child: MaterialButton(
-                    child: Text('Sign in'),
+                    child: const Text('Sign in'),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         sendPostRequest();
@@ -198,30 +199,30 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30.0,
                 ),
                 Container(
                   child: Row(
                     children: [
-                      Text('Don\'t have an account? '),
+                      const Text('Don\'t have an account? '),
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => RegisterScreen(),
+                              builder: (context) => const RegisterScreen(),
                             ),
                           );
                         },
-                        child: Text('Register now'),
+                        child: const Text('Register now'),
                       ),TextButton(
                         onPressed: () {
                           Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => MainScreen()),
+                            MaterialPageRoute(builder: (context) => const MainScreen()),
                                 (Route<dynamic> route) => false,
                           );
                         },
-                        child: Text('Skip'),
+                        child: const Text('Skip'),
                       ),
                     ],
                   ),

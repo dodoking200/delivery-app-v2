@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final response = await http.get(Uri.parse(constructImageUrl('api/products')));
       if (response.statusCode == 200) {
-        print(response.body);
         final jsonData = jsonDecode(response.body);
         setState(() {
           products = jsonData['data'];
@@ -43,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final response = await http.get(Uri.parse(constructImageUrl('api/stores')));
       if (response.statusCode == 200) {
-        print(response.body);
         final jsonData = jsonDecode(response.body);
         setState(() {
           stores = jsonData['data'];
@@ -63,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -89,12 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 100,
                           width: 100,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           stores[index]['name'] ?? '',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -103,11 +101,11 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           // Display Products in a Grid
           Expanded(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
@@ -121,12 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         constructImageUrl(products[index]['image'] ?? ''),
                         height: 70,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Text(
                         products[index]['name'] ?? '',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

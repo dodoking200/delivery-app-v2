@@ -24,16 +24,16 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       appBar: AppBar(
         backgroundColor: Colors.amberAccent,
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart))
         ],
       ),
       body: ListView(
         children: [
-          SizedBox(height: 30.0),
+          const SizedBox(height: 30.0),
           Center(
             child: Container(
               clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(16.0)),
               ),
               child: Image(
@@ -47,18 +47,18 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
           Center(
             child: Text(
               Product['name']!,
-              style: TextStyle(fontSize: 40.0),
+              style: const TextStyle(fontSize: 40.0),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               Product['description']!,
-              style: TextStyle(fontSize: 20.0),
+              style: const TextStyle(fontSize: 20.0),
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 20.0),
+            margin: const EdgeInsets.symmetric(vertical: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -76,16 +76,16 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                         }
                       });
                     },
-                    icon: Icon(Icons.remove),
+                    icon: const Icon(Icons.remove),
                     iconSize: 30.0,
                   ),
                 ),
-                SizedBox(width: 30.0),
+                const SizedBox(width: 30.0),
                 Text(
                   'Count: $count',
-                  style: TextStyle(fontSize: 20.0),
+                  style: const TextStyle(fontSize: 20.0),
                 ),
-                SizedBox(width: 30.0),
+                const SizedBox(width: 30.0),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.green,
@@ -100,7 +100,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                         }
                       });
                     },
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     iconSize: 30.0,
                   ),
                 )
@@ -111,27 +111,27 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
             child: Container(
               height: 40.0,
               width: 200.0,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.all(Radius.circular(16.0)),
               ),
               child: MaterialButton(
-                child: Text('Buy', style: TextStyle(color: Colors.white)),
+                child: const Text('Buy', style: TextStyle(color: Colors.white)),
                 onPressed: () {},
               ),
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Center(
             child: Container(
               height: 40.0,
               width: 200.0,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.all(Radius.circular(16.0)),
               ),
               child: MaterialButton(
-                child: Text(
+                child: const Text(
                   'Add to card',
                   style: TextStyle(color: Colors.white),
                 ),

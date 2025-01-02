@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test1/Card_Screen.dart';
 import 'package:test1/Favorites_Screen.dart';
@@ -12,6 +11,8 @@ import 'package:test1/homeScreen.dart';
 // import 'dart:convert';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -54,10 +55,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   List<Widget> screens = [
-    HomeScreen(),
-    storesScreen(),
-    ProductScreen(),
-    OrderScreen(),
+    const HomeScreen(),
+    const storesScreen(),
+    const ProductScreen(),
+    const OrderScreen(),
   ];
   List<String> Titles = [
     "Main page",
@@ -74,43 +75,46 @@ class _MainScreenState extends State<MainScreen> {
         leading: _selectedIndex == 0 || _selectedIndex == 3
             ? null
             : IconButton(
-                icon: Icon(Icons.search, color: Colors.black),
+                icon: const Icon(Icons.search, color: Colors.black),
                 onPressed: () {
 
                 },
               ),
         title: Text(
           Titles[_selectedIndex],
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite, color: Colors.black),
+            icon: const Icon(Icons.favorite, color: Colors.black),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => FavoritesScreen()),
+                MaterialPageRoute(builder: (context) => const FavoritesScreen()),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.shopping_cart, color: Colors.black),
+            icon: const Icon(Icons.shopping_cart, color: Colors.black),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CardScreen()),
+                MaterialPageRoute(builder: (context) => const CardScreen()),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.account_circle, color: Colors.black),
+            icon: const Icon(Icons.account_circle, color: Colors.black),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => UserScreen()),
+                MaterialPageRoute(builder: (context) => const UserScreen()),
               );
             },
           ),
         ],
       ),
-      body: screens[_selectedIndex],
+      body: IndexedStack(
+          index: _selectedIndex,
+          children: screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
