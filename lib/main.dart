@@ -5,10 +5,12 @@ import 'package:test1/Token_Secure_Storage.dart';
 import 'main_screen.dart';
 
 String constructImageUrl(String relativePath) {
-  const baseUrl = 'http://192.168.201.103:8000/';
+  const baseUrl = 'http://192.168.237.103:8000/';
   return baseUrl + relativePath;
+}
 
-
+Future<bool> hasToken() async {
+  return await TokenSecureStorage.hasToken();
 }
 
 void main() {
@@ -21,9 +23,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: TokenSecureStorage.hasToken() == false ? LoginScreen():MainScreen(),
+      home: FutureBuilder<bool>(
+        future: hasToken(),
+        builder: (context, snapshot) {
+          // Check if the Future is complete
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show a loading indicator while waiting for the Future
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          // If the Future is resolved
+          if (snapshot.hasData && snapshot.data == true) {
+            return MainScreen(); // User is authenticated
+          } else {
+            return LoginScreen(); // User is not authenticated
+          }
+        },
+      ),
     );
   }
 }
-
-

@@ -57,22 +57,13 @@ class _UserScreenState extends State<UserScreen> {
               ),
               const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                ),
-                child: const Text('Edit Account'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
                 onPressed: () {
+                  print("***********************************************************");
                   removetoken();
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                         (Route<dynamic> route) => false,
+
                   );
                 },
                 style: ElevatedButton.styleFrom(

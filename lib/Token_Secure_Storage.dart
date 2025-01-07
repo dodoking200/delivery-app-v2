@@ -29,6 +29,8 @@ String? token =  await _secureStorage.read(key: 'token');
       url,
       headers: headers,
     );
+    print("_____________________________________________");
+    print(response.body);
 
     await _secureStorage.delete(key: 'token');
 
@@ -36,6 +38,8 @@ String? token =  await _secureStorage.read(key: 'token');
 
   static Future<bool> hasToken() async {
     String? token = await getToken();
+    print(token);
+    print( token != null && token.isNotEmpty);
     return token != null && token.isNotEmpty;
   }
 }

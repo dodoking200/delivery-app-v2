@@ -53,17 +53,56 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         // Save the token securely using the static method
-        String token = jsonDecode(response.body)['token'].toString();  // Ensure token is a string
+        String token = jsonDecode(response.body)['token'].toString(); // Ensure token is a string
         await TokenSecureStorage.saveToken(token);
         print('Success: $token');
       } else {
+        // Show an alert with the error message
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text('Failed with status: ${response.statusCode}\nResponse: ${response.body}'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
         print('Failed with status: ${response.statusCode}');
         print('Response: ${response.body}');
       }
     } catch (e) {
+      // Show an alert for the exception
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text('An error occurred: $e'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+
       print('Error occurred: $e');
     }
   }
+
 
 
   final TextEditingController phoneController = TextEditingController();
