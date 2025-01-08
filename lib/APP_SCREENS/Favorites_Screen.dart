@@ -1,50 +1,68 @@
 import 'package:flutter/material.dart';
 
-import 'Token_Secure_Storage.dart';
-import 'main.dart';
+import '../Token_Secure_Storage.dart';
+import '../main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+final headers = {
+  'Content-Type': 'application/json',
+  // Ensures you're sending JSON
+  'Authorization': 'Bearer ${token()}',
+  // Replace with your actual token
+};
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
 
-
-
   @override
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
-Future<void> token() async {
+
+Future<String?> token() async {
   TokenSecureStorage storage = TokenSecureStorage();
 
   String? token = await TokenSecureStorage.getToken();
-  print('Retrieved Token: $token');
+  return token;
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-
   List<dynamic> favorites = [];
+
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse(constructImageUrl('api/favorites')));
+      final tokenValue = await token();
+      final response = await http.post(
+        Uri.parse(constructImageUrl('api/users/favorites')),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenValue',
+        },
+      );
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
-          favorites = jsonData['data'];
+            favorites = jsonData['products'] ?? [];
+
         });
+        print(response.body);
       } else {
-        print('Failed to fetch products');
+        print('Failed to fetch products. Status code: ${response.statusCode}');
+
       }
     } catch (e) {
       print('Error fetching products: $e');
     }
   }
 
+
   void _showDeleteDialog(int index) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Favorite'),
-        content: const Text('Are you sure you want to remove this item from favorites?'),
+        content: const Text(
+            'Are you sure you want to remove this item from favorites?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -64,10 +82,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ),
     );
   }
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    token();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.yellow,
@@ -78,6 +100,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         itemCount: favorites.length,
         itemBuilder: (context, index) {
           final favorite = favorites[index];
+
           return Column(
             children: [
               Container(
@@ -86,6 +109,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Display product image
                     Expanded(
                       child: Center(
                         child: Container(
@@ -94,20 +118,38 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           clipBehavior: Clip.hardEdge,
                           decoration: const BoxDecoration(shape: BoxShape.circle),
                           child: Image.network(
-                            constructImageUrl(favorite['image']!),
+                            constructImageUrlWithoutSlash(favorite['image'] ?? ''),
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Icon(Icons.broken_image),
                           ),
                         ),
                       ),
                     ),
+                    // Display product name and price
                     Expanded(
-                      child: Text(
-                        favorite['name']!,
-                        style: const TextStyle(
-                          fontSize: 30.0,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            favorite['name'] ?? 'Unknown Product',
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "\$${favorite['price'] ?? '0'}",
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    // Delete button
                     Expanded(
                       child: IconButton(
                         onPressed: () => _showDeleteDialog(index),
@@ -122,7 +164,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ],
           );
         },
-      ),
+      )
+      ,
     );
   }
 }

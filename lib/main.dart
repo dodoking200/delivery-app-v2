@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:test1/login_screen.dart';
+import 'package:test1/LOGIN/login_screen.dart';
 import 'package:test1/Token_Secure_Storage.dart';
 
-import 'main_screen.dart';
-
+import 'MAIN/main_screen.dart';
+//http://192.168.237.103:8000/ is my mobile (xiamoi)
 String constructImageUrl(String relativePath) {
   const baseUrl = 'http://192.168.237.103:8000/';
+  return baseUrl + relativePath;
+}
+String constructImageUrlWithoutSlash(String relativePath) {
+  const baseUrl = 'http://192.168.237.103:8000';
   return baseUrl + relativePath;
 }
 

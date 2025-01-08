@@ -3,9 +3,9 @@ import 'Register_Screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'Token_Secure_Storage.dart';
-import 'main.dart';
-import 'main_screen.dart';
+import '../Token_Secure_Storage.dart';
+import '../main.dart';
+import '../MAIN/main_screen.dart';
 
 final _formKey = GlobalKey<FormState>();
 

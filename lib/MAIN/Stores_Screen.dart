@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:test1/Product_Page_Screen.dart';
+import 'package:test1/APP_SCREENS/Product_Page_Screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'main.dart';
+import '../main.dart';
 
 class storesScreen extends StatefulWidget {
   const storesScreen({super.key});
