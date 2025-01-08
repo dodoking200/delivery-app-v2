@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../Token_Secure_Storage.dart';
 import '../main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-final headers = {
-  'Content-Type': 'application/json',
-  // Ensures you're sending JSON
-  'Authorization': 'Bearer ${token()}',
-  // Replace with your actual token
-};
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -19,19 +11,17 @@ class FavoritesScreen extends StatefulWidget {
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
-Future<String?> token() async {
-  TokenSecureStorage storage = TokenSecureStorage();
-
-  String? token = await TokenSecureStorage.getToken();
-  return token;
-}
-
 class _FavoritesScreenState extends State<FavoritesScreen> {
   List<dynamic> favorites = [];
 
   Future<void> fetchData() async {
     try {
       final tokenValue = await token();
+      if (tokenValue == null) {
+        print('Token is null');
+        return;
+      }
+
       final response = await http.post(
         Uri.parse(constructImageUrl('api/users/favorites')),
         headers: {
@@ -39,37 +29,76 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           'Authorization': 'Bearer $tokenValue',
         },
       );
+
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
-            favorites = jsonData['products'] ?? [];
-
+          favorites = jsonData; // The API returns a list of products directly
         });
-        print(response.body);
+        print('Favorites: ${response.body}');
       } else {
-        print('Failed to fetch products. Status code: ${response.statusCode}');
-
+        print('Failed to fetch favorites. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
       }
     } catch (e) {
-      print('Error fetching products: $e');
+      print('Error fetching favorites: $e');
     }
   }
 
+  Future<void> deleteFavorite(int productId) async {
+    try {
+      final tokenValue = await token();
+      if (tokenValue == null) {
+        print('Token is null');
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse(constructImageUrl('api/users/unfavorite/$productId')),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenValue',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Product removed from favorites: $productId');
+        // Refresh the favorites list after deletion
+        fetchData();
+      } else {
+        print('Failed to remove favorite. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error removing favorite: $e');
+    }
+  }
+
+  Future<String?> token() async {
+    TokenSecureStorage storage = TokenSecureStorage();
+    String? token = await TokenSecureStorage.getToken();
+    return token;
+  }
 
   void _showDeleteDialog(int index) {
+    final favorite = favorites[index];
+    final productId = favorite['id']; // Get the product ID
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Favorite'),
-        content: const Text(
-            'Are you sure you want to remove this item from favorites?'),
+        content: const Text('Are you sure you want to remove this item from favorites?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              // Call the API to delete the favorite
+              await deleteFavorite(productId);
+              // Remove the item from the local list
               setState(() {
                 favorites.removeAt(index);
               });
@@ -82,6 +111,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ),
     );
   }
+
   @override
   void initState() {
     super.initState();
@@ -118,7 +148,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           clipBehavior: Clip.hardEdge,
                           decoration: const BoxDecoration(shape: BoxShape.circle),
                           child: Image.network(
-                            constructImageUrlWithoutSlash(favorite['image'] ?? ''),
+                            constructImageUrlWithoutSlash(favorite['image']?.substring(4) ?? ''),
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 Icon(Icons.broken_image),
@@ -164,8 +194,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ],
           );
         },
-      )
-      ,
+      ),
     );
   }
 }

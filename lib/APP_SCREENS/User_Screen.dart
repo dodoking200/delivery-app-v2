@@ -9,18 +9,31 @@ class UserScreen extends StatefulWidget {
   @override
   State<UserScreen> createState() => _UserScreenState();
 }
-void removetoken() async {
-  TokenSecureStorage storage = TokenSecureStorage();
 
-  await TokenSecureStorage.removeToken();
-}
 
-final Map<String, String> user = {
-  'first_name': 'ghaith',
-  'last_name': 'aljabban',
-  'location': 'Baghdad Street/Damascus/Syria',
-};
+
 class _UserScreenState extends State<UserScreen> {
+  Map<String, dynamic>? userData;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+  Future<void> _loadUserData() async {
+    userData = await TokenSecureStorage.getUserData();
+    setState(() {}); // Refresh the UI with the loaded data
+  }
+
+  void removetoken() async {
+    await TokenSecureStorage.removeToken();
+    await TokenSecureStorage.removeUserData();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,18 +56,22 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
-                'First Name: ${user['first_name']}',
-                style: const TextStyle(fontSize: 18),
-              ),
-              Text(
-                'Last Name: ${user['last_name']}',
-                style: const TextStyle(fontSize: 18),
-              ),
-              Text(
-                'Location: ${user['location']}',
-                style: const TextStyle(fontSize: 18),
-              ),
+              if (userData != null) ...[
+                Text(
+                  'First Name: ${userData!['first_name']}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Last Name: ${userData!['last_name']}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Location: ${userData!['location']}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ] else ...[
+                const CircularProgressIndicator(),
+              ],
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
@@ -63,7 +80,6 @@ class _UserScreenState extends State<UserScreen> {
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                         (Route<dynamic> route) => false,
-
                   );
                 },
                 style: ElevatedButton.styleFrom(

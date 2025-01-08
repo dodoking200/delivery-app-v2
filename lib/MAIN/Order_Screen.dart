@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../main.dart';
+import '../Token_Secure_Storage.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
@@ -8,50 +12,50 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  final List<Map<String, String>> orders = [
-    {'name': 'Product 1', 'image': 'assets/images/product3.jpg', 'count': '23'},
-    {'name': 'Product 2', 'image': 'assets/images/product2.jpg', 'count': '78'},
-    {'name': 'Product 3', 'image': 'assets/images/product1.jpg', 'count': '7'},
-    {'name': 'Product 4', 'image': 'assets/images/product4.jpg', 'count': '1'},
-    {'name': 'Product 5', 'image': 'assets/images/product5.jpg', 'count': '123'},
-  ];
+  List<dynamic> orders = [];
+  bool isLoading = true;
 
-  void _showEditDialog(int index) {
+  @override
+  void initState() {
+    super.initState();
+    fetchOrders();
+  }
 
-    final TextEditingController countController =
-    TextEditingController(text: orders[index]['count']);
+  Future<void> fetchOrders() async {
+    try {
+      final tokenValue = await TokenSecureStorage.getToken();
+      if (tokenValue == null) {
+        print('Token is null');
+        return;
+      }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Order'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: countController,
-              decoration: const InputDecoration(labelText: 'Count'),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                orders[index]['count'] = countController.text;
-              });
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
+      final response = await http.get(
+        Uri.parse(constructImageUrl('api/user/orders')),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenValue',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        setState(() {
+          orders = jsonData['orders']; // Assuming the API returns a list of orders under the key "orders"
+          isLoading = false;
+        });
+      } else {
+        print('Failed to fetch orders. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching orders: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void _showDeleteDialog(int index) {
@@ -82,6 +86,12 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
@@ -91,9 +101,11 @@ class _OrderScreenState extends State<OrderScreen> {
           return Column(
             children: [
               OrderItem(
-                name: order['name']!,
-                image: order['image']!,
-                count: order['count']!,
+                orderId: order['id'].toString(),
+                status: order['status'],
+                deliveryAddress: order['delivery_address'],
+                bill: order['bill'],
+                createdAt: order['created_at'],
                 onDelete: () => _showDeleteDialog(index),
               ),
               const SizedBox(height: 10.0),
@@ -106,15 +118,19 @@ class _OrderScreenState extends State<OrderScreen> {
 }
 
 class OrderItem extends StatelessWidget {
-  final String name;
-  final String image;
-  final String count;
+  final String orderId;
+  final String status;
+  final String deliveryAddress;
+  final String bill;
+  final String createdAt;
   final VoidCallback onDelete;
 
   const OrderItem({
-    required this.name,
-    required this.image,
-    required this.count,
+    required this.orderId,
+    required this.status,
+    required this.deliveryAddress,
+    required this.bill,
+    required this.createdAt,
     required this.onDelete,
     super.key,
   });
@@ -122,55 +138,52 @@ class OrderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150.0,
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.green[100],
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 3,
-            child: Center(
-              child: Container(
-                width: 80.0,
-                height: 80.0,
-                clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.cover,
-                ),
-              ),
+          Text(
+            'Order ID: $orderId',
+            style: const TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          Expanded(
-            flex: 4,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Count: $count',
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 8.0),
+          Text(
+            'Status: $status',
+            style: const TextStyle(
+              fontSize: 16.0,
             ),
           ),
-          Expanded(
-            flex: 3,
+          const SizedBox(height: 8.0),
+          Text(
+            'Delivery Address: $deliveryAddress',
+            style: const TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            'Bill: \$$bill',
+            style: const TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            'Created At: $createdAt',
+            style: const TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Align(
+            alignment: Alignment.centerRight,
             child: IconButton(
               onPressed: onDelete,
               icon: const Icon(

@@ -5,11 +5,11 @@ import 'package:test1/Token_Secure_Storage.dart';
 import 'MAIN/main_screen.dart';
 //http://192.168.237.103:8000/ is my mobile (xiamoi)
 String constructImageUrl(String relativePath) {
-  const baseUrl = 'http://192.168.237.103:8000/';
+  const baseUrl = 'http://127.0.0.1:8000/';
   return baseUrl + relativePath;
 }
 String constructImageUrlWithoutSlash(String relativePath) {
-  const baseUrl = 'http://192.168.237.103:8000';
+  const baseUrl = 'http://127.0.0.1:8000';
   return baseUrl + relativePath;
 }
 

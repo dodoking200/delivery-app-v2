@@ -55,6 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
         // Save the token securely using the static method
         String token = jsonDecode(response.body)['token'].toString(); // Ensure token is a string
         await TokenSecureStorage.saveToken(token);
+
+        // Save user data
+        Map<String, dynamic> userData = jsonDecode(response.body)['user']; // Assuming the API returns user data
+        await TokenSecureStorage.saveUserData(userData);
+
         print('Success: $token');
       } else {
         // Show an alert with the error message
@@ -217,7 +222,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         setState(() {
                           _obscureText = !_obscureText;
-                          print(_obscureText);
                         });
                       },
                     ),
