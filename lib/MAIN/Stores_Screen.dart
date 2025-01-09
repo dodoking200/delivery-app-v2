@@ -85,9 +85,6 @@ class ShowBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ProductPageScreen()),
-        );
       },
       child: Container(
         clipBehavior: Clip.hardEdge,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../APP_SCREENS/Product_Page_Screen.dart';
 import '../main.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -79,8 +80,10 @@ class _ProductScreenState extends State<ProductScreen> {
         ShowTwoBoxes(
           name1: newProducts[i - 1]['name'],
           image1: constructImageUrl(newProducts[i - 1]['image']),
+          id1: newProducts[i - 1]['id'], // Pass product ID
           name2: newProducts[i]['name'],
           image2: constructImageUrl(newProducts[i]['image']),
+          id2: newProducts[i]['id'], // Pass product ID
         ),
       );
     }
@@ -90,11 +93,11 @@ class _ProductScreenState extends State<ProductScreen> {
         ShowTwoBoxes(
           name1: newProducts.last['name'],
           image1: constructImageUrl(newProducts.last['image']),
+          id1: newProducts.last['id'], // Pass product ID
         ),
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -131,8 +134,10 @@ class ShowTwoBoxes extends StatelessWidget {
   final String? image1;
   final String? name2;
   final String? image2;
+  final int? id1; // Add product ID
+  final int? id2; // Add product ID
 
-  const ShowTwoBoxes({super.key, this.name1, this.image1, this.name2, this.image2});
+  const ShowTwoBoxes({super.key, this.name1, this.image1, this.name2, this.image2, this.id1, this.id2});
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +149,7 @@ class ShowTwoBoxes extends StatelessWidget {
             child: ShowBox(
               name: name1,
               image: image1,
+              id: id1, // Pass product ID
             ),
           ),
           const SizedBox(width: 20.0),
@@ -152,6 +158,7 @@ class ShowTwoBoxes extends StatelessWidget {
                 ? ShowBox(
               name: name2,
               image: image2,
+              id: id2, // Pass product ID
             )
                 : const SizedBox(),
           ),
@@ -164,14 +171,21 @@ class ShowTwoBoxes extends StatelessWidget {
 class ShowBox extends StatelessWidget {
   final String? name;
   final String? image;
+  final int? id; // Add product ID
 
-  const ShowBox({super.key, this.name, this.image});
+  const ShowBox({super.key, this.name, this.image, this.id});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to product detail page
+        // Navigate to product detail page with the product ID
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductPageScreen(productId: id!),
+          ),
+        );
       },
       child: Container(
         clipBehavior: Clip.hardEdge,
