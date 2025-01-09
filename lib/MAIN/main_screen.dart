@@ -7,9 +7,6 @@ import 'package:test1/MAIN/Stores_Screen.dart';
 import 'package:test1/APP_SCREENS/User_Screen.dart';
 import 'package:test1/MAIN/homeScreen.dart';
 
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -19,34 +16,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
-  // Sample data for stores and products
-  final List<Map<String, String>> stores = [
-    {'name': 'Store 1', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 2', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 3', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 4', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 5', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 6', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 7', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 8', 'image': 'https://via.placeholder.com/150'},
-    {'name': 'Store 9', 'image': 'https://via.placeholder.com/150'},
-  ];
-
-  final List<Map<String, String>> products = [
-    {'name': 'Product 1', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 2', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 3', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 4', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 5', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 6', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 7', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 8', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 9', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 10', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 11', 'image': 'https://via.placeholder.com/100'},
-    {'name': 'Product 12', 'image': 'https://via.placeholder.com/100'},
-  ];
+  String searchQuery = ''; // Add a search query state
 
   void _onItemTapped(int index) {
     setState(() {
@@ -54,13 +24,33 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  List<Widget> screens = [
+  void _onSearchPressed() {
+    if (_selectedIndex == 1) {
+      // Navigate to the search screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SearchStoreScreen(
+            onSearch: (String query) {
+              setState(() {
+                searchQuery = query; // Update the search query
+                _selectedIndex = 1; // Ensure the stores screen is active
+              });
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  // Use a getter to dynamically generate the screens list
+  List<Widget> get screens => [
     const HomeScreen(),
-    const storesScreen(),
+    storesScreen(searchQuery: searchQuery), // Pass the search query to storesScreen
     const ProductScreen(),
     const OrderScreen(),
   ];
-  List<String> Titles = [
+
+  final List<String> Titles = [
     "Main page",
     "Stores page",
     "Product page",
@@ -71,15 +61,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:  Colors.yellow,
+        backgroundColor: Colors.yellow,
         leading: _selectedIndex == 0 || _selectedIndex == 3
             ? null
             : IconButton(
-                icon: const Icon(Icons.search, color: Colors.black),
-                onPressed: () {
-
-                },
-              ),
+          icon: const Icon(Icons.search, color: Colors.black),
+          onPressed: _onSearchPressed,
+        ),
         title: Text(
           Titles[_selectedIndex],
           style: const TextStyle(color: Colors.black),
@@ -112,8 +100,8 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       body: IndexedStack(
-          index: _selectedIndex,
-          children: screens,
+        index: _selectedIndex,
+        children: screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -134,18 +122,51 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Orders',
           ),
         ],
-        backgroundColor:  Colors.yellow,
+        backgroundColor: Colors.yellow,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
-        // Prevents shifting behavior
         elevation: 0,
-        // Removes shadow
         selectedItemColor: Colors.black,
-        // Ensure selected item remains black
         unselectedItemColor: Colors.black,
-        // Ensure unselected items are black
         onTap: _onItemTapped,
       ),
+    );
+  }
+}
+
+class SearchStoreScreen extends StatelessWidget {
+  final Function(String) onSearch;
+
+  const SearchStoreScreen({super.key, required this.onSearch});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController _searchController = TextEditingController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: TextField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            hintText: 'Search stores...',
+            border: InputBorder.none,
+          ),
+          onSubmitted: (value) {
+            onSearch(value); // Pass the search query back
+            Navigator.of(context).pop(); // Close the search screen
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              onSearch(_searchController.text); // Pass the search query back
+              Navigator.of(context).pop(); // Close the search screen
+            },
+          ),
+        ],
+      ),
+      body: Container(), // You can add search results here if needed
     );
   }
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:test1/APP_SCREENS/Product_Page_Screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../main.dart';
+import 'Store_Products_Screen.dart';
 
 class storesScreen extends StatefulWidget {
-  const storesScreen({super.key});
+  final String searchQuery;
+
+  const storesScreen({super.key, required this.searchQuery});
 
   @override
   State<storesScreen> createState() => _storesScreenState();
@@ -15,21 +17,47 @@ class storesScreen extends StatefulWidget {
 class _storesScreenState extends State<storesScreen> {
   List<dynamic> stores = [];
   List<Widget> sma = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  @override
+  void didUpdateWidget(storesScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      fetchData();
+    }
+  }
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse(constructImageUrl('api/stores')));
+      final String url = widget.searchQuery.isNotEmpty
+          ? constructImageUrl('api/stores/search/${widget.searchQuery}')
+          : constructImageUrl('api/stores');
+
+      final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
-          stores = jsonData['data'];
-          populateSma(); // Populate the sma list after fetching data
+          stores = widget.searchQuery.isNotEmpty ? jsonData['Stores']['data'] : jsonData['data'];
+          populateSma();
+          isLoading = false;
         });
       } else {
-        print('Failed to fetch products');
+        print('Failed to fetch stores');
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
-      print('Error fetching products: $e');
+      print('Error fetching stores: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -40,8 +68,10 @@ class _storesScreenState extends State<storesScreen> {
         ShowTwoBoxes(
           name1: stores[i - 1]['name'],
           image1: constructImageUrl(stores[i - 1]['image']),
+          id1: stores[i - 1]['id'],
           name2: stores[i]['name'],
           image2: constructImageUrl(stores[i]['image']),
+          id2: stores[i]['id'],
         ),
       );
     }
@@ -50,27 +80,26 @@ class _storesScreenState extends State<storesScreen> {
         ShowTwoBoxes(
           name1: stores[stores.length - 1]['name'],
           image1: constructImageUrl(stores[stores.length - 1]['image']),
+          id1: stores[stores.length - 1]['id'],
         ),
       );
     }
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchData();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ListView(
+    return isLoading
+        ? const Center(
+      child: CircularProgressIndicator(),
+    )
+        : ListView(
       children: sma.isNotEmpty
           ? sma
           : [
         const Center(
-          child: CircularProgressIndicator(),
+          child: Text('No stores found'),
         ),
-      ], // Show a loading spinner until data is loaded
+      ],
     );
   }
 }
@@ -78,13 +107,22 @@ class _storesScreenState extends State<storesScreen> {
 class ShowBox extends StatelessWidget {
   final String? name;
   final String? image;
+  final int? id;
 
-  const ShowBox({super.key, this.name, this.image});
+  const ShowBox({super.key, this.name, this.image, this.id});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        if (id != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => StoreProductsScreen(storeId: id!),
+            ),
+          );
+        }
       },
       child: Container(
         clipBehavior: Clip.hardEdge,
@@ -125,8 +163,10 @@ class ShowTwoBoxes extends StatelessWidget {
   final String? image1;
   final String? name2;
   final String? image2;
+  final int? id1;
+  final int? id2;
 
-  const ShowTwoBoxes({super.key, this.name1, this.image1, this.name2, this.image2});
+  const ShowTwoBoxes({super.key, this.name1, this.image1, this.name2, this.image2, this.id1, this.id2});
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +179,7 @@ class ShowTwoBoxes extends StatelessWidget {
             child: ShowBox(
               name: name1,
               image: image1,
+              id: id1,
             ),
           ),
           const SizedBox(
@@ -150,6 +191,7 @@ class ShowTwoBoxes extends StatelessWidget {
                 ? ShowBox(
               name: name2,
               image: image2,
+              id: id2,
             )
                 : const SizedBox(),
           ),
