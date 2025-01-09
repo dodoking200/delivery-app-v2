@@ -58,30 +58,38 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
 
-  void _showDeleteDialog(int index) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Order'),
-        content: const Text('Are you sure you want to delete this order?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+  Future<void> fetchOrderItems(int orderId) async {
+    try {
+      final tokenValue = await TokenSecureStorage.getToken();
+      if (tokenValue == null) {
+        print('Token is null');
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(constructImageUrl('api/order/$orderId/items')),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenValue',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        // Navigate to a new screen to display the order items
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderItemsScreen(orderItems: jsonData['order']['items']),
           ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                orders.removeAt(index);
-              });
-              Navigator.of(context).pop();
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
+        );
+      } else {
+        print('Failed to fetch order items. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching order items: $e');
+    }
   }
 
   @override
@@ -106,7 +114,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 deliveryAddress: order['delivery_address'],
                 bill: order['bill'],
                 createdAt: order['created_at'],
-                onDelete: () => _showDeleteDialog(index),
+                onTap: () => fetchOrderItems(order['id']), // Fetch order items when tapped
               ),
               const SizedBox(height: 10.0),
             ],
@@ -123,7 +131,7 @@ class OrderItem extends StatelessWidget {
   final String deliveryAddress;
   final String bill;
   final String createdAt;
-  final VoidCallback onDelete;
+  final VoidCallback onTap;
 
   const OrderItem({
     required this.orderId,
@@ -131,68 +139,86 @@ class OrderItem extends StatelessWidget {
     required this.deliveryAddress,
     required this.bill,
     required this.createdAt,
-    required this.onDelete,
+    required this.onTap,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.green[100],
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Order ID: $orderId',
-            style: const TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            'Status: $status',
-            style: const TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            'Delivery Address: $deliveryAddress',
-            style: const TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            'Bill: \$$bill',
-            style: const TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            'Created At: $createdAt',
-            style: const TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              onPressed: onDelete,
-              icon: const Icon(
-                Icons.delete,
-                color: Colors.red,
+    return GestureDetector(
+      onTap: onTap, // Trigger the onTap callback when the item is tapped
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.green[100],
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Order ID: $orderId',
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8.0),
+            Text(
+              'Status: $status',
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Delivery Address: $deliveryAddress',
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Bill: \$$bill',
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Created At: $createdAt',
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OrderItemsScreen extends StatelessWidget {
+  final List<dynamic> orderItems;
+
+  const OrderItemsScreen({required this.orderItems, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Order Items'),
+      ),
+      body: ListView.builder(
+        itemCount: orderItems.length,
+        itemBuilder: (context, index) {
+          final item = orderItems[index];
+          return ListTile(
+            title: Text(item['product']['name']),
+            subtitle: Text('Quantity: ${item['quantity']}'),
+            trailing: Text('\$${item['product']['price']}'),
+          );
+        },
       ),
     );
   }
