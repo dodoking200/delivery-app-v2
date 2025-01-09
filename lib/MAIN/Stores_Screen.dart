@@ -17,7 +17,9 @@ class storesScreen extends StatefulWidget {
 class _storesScreenState extends State<storesScreen> {
   List<dynamic> stores = [];
   List<Widget> sma = [];
-  bool isLoading = true;
+  int currentPage = 1;
+  bool isLoading = false;
+  bool hasMore = true; // Flag to indicate if more stores are available
 
   @override
   void initState() {
@@ -29,58 +31,77 @@ class _storesScreenState extends State<storesScreen> {
   void didUpdateWidget(storesScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.searchQuery != widget.searchQuery) {
+      // Reset state when search query changes
+      setState(() {
+        currentPage = 1;
+        stores.clear();
+        sma.clear();
+        hasMore = true;
+      });
       fetchData();
     }
   }
 
   Future<void> fetchData() async {
+    if (isLoading || !hasMore) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final String url = widget.searchQuery.isNotEmpty
-          ? constructImageUrl('api/stores/search/${widget.searchQuery}')
-          : constructImageUrl('api/stores');
+          ? constructImageUrl('api/stores/search/${widget.searchQuery}?page=$currentPage')
+          : constructImageUrl('api/stores?page=$currentPage');
 
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
+        final List<dynamic> newStores = widget.searchQuery.isNotEmpty
+            ? jsonData['Stores']['data']
+            : jsonData['data'];
+        final int lastPage = widget.searchQuery.isNotEmpty
+            ? jsonData['Stores']['last_page']
+            : jsonData['last_page'];
+
         setState(() {
-          stores = widget.searchQuery.isNotEmpty ? jsonData['Stores']['data'] : jsonData['data'];
-          populateSma();
-          isLoading = false;
+          currentPage++;
+          stores.addAll(newStores);
+          populateSma(newStores);
+          hasMore = currentPage <= lastPage; // Update hasMore flag
         });
       } else {
-        print('Failed to fetch stores');
-        setState(() {
-          isLoading = false;
-        });
+        print('Failed to fetch stores: ${response.statusCode}');
       }
     } catch (e) {
       print('Error fetching stores: $e');
+    } finally {
       setState(() {
         isLoading = false;
       });
     }
   }
 
-  void populateSma() {
-    sma.clear();
-    for (int i = 1; i < stores.length; i += 2) {
+  void populateSma(List<dynamic> newStores) {
+    for (int i = 1; i < newStores.length; i += 2) {
       sma.add(
         ShowTwoBoxes(
-          name1: stores[i - 1]['name'],
-          image1: constructImageUrl(stores[i - 1]['image']),
-          id1: stores[i - 1]['id'],
-          name2: stores[i]['name'],
-          image2: constructImageUrl(stores[i]['image']),
-          id2: stores[i]['id'],
+          name1: newStores[i - 1]['name'],
+          image1: constructImageUrl(newStores[i - 1]['image']),
+          id1: newStores[i - 1]['id'],
+          name2: newStores[i]['name'],
+          image2: constructImageUrl(newStores[i]['image']),
+          id2: newStores[i]['id'],
         ),
       );
     }
-    if (stores.length.isOdd) {
+
+    if (newStores.length.isOdd) {
       sma.add(
         ShowTwoBoxes(
-          name1: stores[stores.length - 1]['name'],
-          image1: constructImageUrl(stores[stores.length - 1]['image']),
-          id1: stores[stores.length - 1]['id'],
+          name1: newStores.last['name'],
+          image1: constructImageUrl(newStores.last['image']),
+          id1: newStores.last['id'],
         ),
       );
     }
@@ -88,18 +109,31 @@ class _storesScreenState extends State<storesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(
-      child: CircularProgressIndicator(),
-    )
-        : ListView(
-      children: sma.isNotEmpty
-          ? sma
-          : [
-        const Center(
-          child: Text('No stores found'),
-        ),
-      ],
+    return ListView(
+      children: sma +
+          [
+            if (hasMore)
+              Container(
+                height: 40.0,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                ),
+                child: MaterialButton(
+                  child: isLoading
+                      ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                      : const Text(
+                    'Show more',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: fetchData,
+                ),
+              ),
+            const SizedBox(height: 10.0),
+          ],
     );
   }
 }
