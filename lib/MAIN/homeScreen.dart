@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../APP_SCREENS/Product_Page_Screen.dart';
 import '../main.dart';
+import 'Store_Products_Screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error fetching products: $e');
     }
   }
+
   Future<void> fetchData2() async {
     try {
       final response = await http.get(Uri.parse(constructImageUrl('api/stores')));
@@ -77,24 +80,36 @@ class _HomeScreenState extends State<HomeScreen> {
               scrollDirection: Axis.horizontal,
               itemCount: stores.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Card(
-                    child: Column(
-                      children: [
-                        Image.network(
-                          constructImageUrl(stores[index]['image'] ?? ''),
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          stores[index]['name'] ?? '',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                final store = stores[index];
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to StoreProductsScreen when a store is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StoreProductsScreen(storeId: store['id']),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Card(
+                      child: Column(
+                        children: [
+                          Image.network(
+                            constructImageUrl(store['image'] ?? ''),
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            store['name'] ?? '',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -112,21 +127,33 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               itemCount: products.length,
               itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    children: [
-                      Image.network(
-                        constructImageUrl(products[index]['image'] ?? ''),
-                        height: 70,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+                final product = products[index];
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to ProductPageScreen when a product is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductPageScreen(productId: product['id']),
                       ),
-                      const SizedBox(height: 5),
-                      Text(
-                        products[index]['name'] ?? '',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                    );
+                  },
+                  child: Card(
+                    child: Column(
+                      children: [
+                        Image.network(
+                          constructImageUrl(product['image'] ?? ''),
+                          height: 70,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          product['name'] ?? '',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
