@@ -45,10 +45,10 @@ class _StoreProductsScreenState extends State<StoreProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Store Products'),
+        title: const Text('Store Products'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {

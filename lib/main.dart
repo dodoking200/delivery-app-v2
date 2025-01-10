@@ -41,9 +41,9 @@ class MyApp extends StatelessWidget {
 
           // If the Future is resolved
           if (snapshot.hasData && snapshot.data == true) {
-            return MainScreen(); // User is authenticated
+            return const MainScreen(); // User is authenticated
           } else {
-            return LoginScreen(); // User is not authenticated
+            return const LoginScreen(); // User is not authenticated
           }
         },
       ),

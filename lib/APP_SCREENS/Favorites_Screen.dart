@@ -151,7 +151,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             constructImageUrlWithoutSlash(favorite['image']?.substring(4) ?? ''),
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
-                                Icon(Icons.broken_image),
+                                const Icon(Icons.broken_image),
                           ),
                         ),
                       ),

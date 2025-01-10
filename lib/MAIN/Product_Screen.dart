@@ -4,10 +4,11 @@ import 'dart:convert';
 
 import '../APP_SCREENS/Product_Page_Screen.dart';
 import '../main.dart';
-import 'Store_Products_Screen.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key});
+  final String searchQuery;
+
+  const ProductScreen({super.key, required this.searchQuery});
 
   @override
   State<ProductScreen> createState() => _ProductScreenState();
@@ -21,11 +22,25 @@ class _ProductScreenState extends State<ProductScreen> {
   bool hasMore = true; // Flag to indicate if more products are available
   bool isInitialFetch = true; // Indicates if this is the first fetch
 
-
   @override
   void initState() {
     super.initState();
     fetchData();
+  }
+
+  @override
+  void didUpdateWidget(ProductScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      // Reset state when search query changes
+      setState(() {
+        currentPage = 1;
+        products.clear();
+        sma.clear();
+        hasMore = true;
+      });
+      fetchData();
+    }
   }
 
   Future<void> fetchData() async {
@@ -36,21 +51,34 @@ class _ProductScreenState extends State<ProductScreen> {
     });
 
     try {
-      final response = await http.get(
-        Uri.parse(constructImageUrl('api/products?page=$currentPage')),
-      );
+      final String url = widget.searchQuery.isNotEmpty
+          ? constructImageUrl('api/products/search/${widget.searchQuery}?page=$currentPage')
+          : constructImageUrl('api/products?page=$currentPage');
+
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        final List<dynamic> newProducts = jsonData['data'];
-        final int lastPage = jsonData['last_page'];
+
+        // Handle both cases: with and without search query
+        final List<dynamic> newProducts;
+        final int lastPage;
+
+        if (widget.searchQuery.isNotEmpty) {
+          // For search response (with 'products' key)
+          newProducts = jsonData['products']['data'] ?? [];
+          lastPage = jsonData['products']['last_page'];
+        } else {
+          // For initial fetch (without 'products' key)
+          newProducts = jsonData['data'] ?? [];
+          lastPage = jsonData['last_page'];
+        }
 
         setState(() {
           currentPage++;
           products.addAll(newProducts);
           populateSma(newProducts);
-          // Stop showing the button if the current page equals or exceeds the last page
-          hasMore = currentPage <= lastPage;
+          hasMore = currentPage <= lastPage; // Update hasMore flag
         });
       } else {
         print('Failed to fetch products: ${response.statusCode}');
@@ -58,7 +86,6 @@ class _ProductScreenState extends State<ProductScreen> {
     } catch (e) {
       print('Error fetching products: $e');
     } finally {
-      // Add delay only for subsequent requests
       if (!isInitialFetch) {
         await Future.delayed(const Duration(seconds: 3));
       } else {
@@ -73,18 +100,16 @@ class _ProductScreenState extends State<ProductScreen> {
 
 
 
-
-
   void populateSma(List<dynamic> newProducts) {
     for (int i = 1; i < newProducts.length; i += 2) {
       sma.add(
         ShowTwoBoxes(
           name1: newProducts[i - 1]['name'],
           image1: constructImageUrl(newProducts[i - 1]['image']),
-          id1: newProducts[i - 1]['id'], // Pass product ID
+          id1: newProducts[i - 1]['id'],
           name2: newProducts[i]['name'],
           image2: constructImageUrl(newProducts[i]['image']),
-          id2: newProducts[i]['id'], // Pass product ID
+          id2: newProducts[i]['id'],
         ),
       );
     }
@@ -94,16 +119,13 @@ class _ProductScreenState extends State<ProductScreen> {
         ShowTwoBoxes(
           name1: newProducts.last['name'],
           image1: constructImageUrl(newProducts.last['image']),
-          id1: newProducts.last['id'], // Pass product ID
+          id1: newProducts.last['id'],
         ),
       );
     }
   }
 
-
-
   @override
-
   Widget build(BuildContext context) {
     return ListView(
       children: sma +
@@ -117,6 +139,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(16.0)),
                 ),
                 child: MaterialButton(
+                  onPressed: fetchData,
                   child: isLoading
                       ? const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -125,7 +148,6 @@ class _ProductScreenState extends State<ProductScreen> {
                     'Show more',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: fetchData,
                 ),
               ),
             const SizedBox(height: 10.0),

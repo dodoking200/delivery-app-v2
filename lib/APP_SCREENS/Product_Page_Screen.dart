@@ -33,8 +33,8 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
 
       if (response.statusCode == 200) {
         setState(() {
-          final json_response = jsonDecode(response.body);
-          product = json_response['product'];
+          final jsonResponse = jsonDecode(response.body);
+          product = jsonResponse['product'];
           isLoading = false;
         });
       } else {

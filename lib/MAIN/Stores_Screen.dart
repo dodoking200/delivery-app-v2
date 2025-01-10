@@ -121,6 +121,7 @@ class _storesScreenState extends State<storesScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(16.0)),
                 ),
                 child: MaterialButton(
+                  onPressed: fetchData,
                   child: isLoading
                       ? const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -129,7 +130,6 @@ class _storesScreenState extends State<storesScreen> {
                     'Show more',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: fetchData,
                 ),
               ),
             const SizedBox(height: 10.0),

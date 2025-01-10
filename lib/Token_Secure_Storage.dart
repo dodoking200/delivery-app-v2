@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'main.dart';
 
 class TokenSecureStorage {
-  static final _secureStorage = FlutterSecureStorage();
+  static const _secureStorage = FlutterSecureStorage();
 
   // Save token securely
   static Future<void> saveToken(String token) async {

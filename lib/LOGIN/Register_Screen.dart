@@ -51,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Check the response
       if (response.statusCode == 200 || response.statusCode == 201) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => MainScreen()),
+          MaterialPageRoute(builder: (context) => const MainScreen()),
               (Route<dynamic> route) => false,
         );
         print('Success: ${response.body}');
@@ -359,7 +359,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           child: _selectedImage == null
-              ? CircleAvatar(
+              ? const CircleAvatar(
             radius: 100, // CircleAvatar size
             backgroundColor: Color(0xFFA4FDAA), // Green background
             child: Icon(

@@ -25,17 +25,19 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onSearchPressed() {
-    if (_selectedIndex == 1) {
-      // Navigate to the search screen
+    if (_selectedIndex == 1 || _selectedIndex == 2) {
+      // Navigate to the search screen for stores or products
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SearchStoreScreen(
             onSearch: (String query) {
               setState(() {
                 searchQuery = query; // Update the search query
-                _selectedIndex = 1; // Ensure the stores screen is active
+                // Ensure the correct screen is active based on the selected index
+                _selectedIndex = _selectedIndex;
               });
             },
+            searchType: _selectedIndex == 1 ? 'stores' : 'products', // Pass the search type
           ),
         ),
       );
@@ -46,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> get screens => [
     const HomeScreen(),
     storesScreen(searchQuery: searchQuery), // Pass the search query to storesScreen
-    const ProductScreen(),
+    ProductScreen(searchQuery: searchQuery),
     const OrderScreen(),
   ];
 
@@ -136,19 +138,20 @@ class _MainScreenState extends State<MainScreen> {
 
 class SearchStoreScreen extends StatelessWidget {
   final Function(String) onSearch;
+  final String searchType; // Add a searchType parameter
 
-  const SearchStoreScreen({super.key, required this.onSearch});
+  const SearchStoreScreen({super.key, required this.onSearch, this.searchType = 'stores'});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _searchController = TextEditingController();
+    final TextEditingController searchController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          controller: _searchController,
-          decoration: const InputDecoration(
-            hintText: 'Search stores...',
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: searchType == 'stores' ? 'Search stores...' : 'Search products...',
             border: InputBorder.none,
           ),
           onSubmitted: (value) {
@@ -160,7 +163,7 @@ class SearchStoreScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              onSearch(_searchController.text); // Pass the search query back
+              onSearch(searchController.text); // Pass the search query back
               Navigator.of(context).pop(); // Close the search screen
             },
           ),
