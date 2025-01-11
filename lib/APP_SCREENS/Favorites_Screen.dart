@@ -127,6 +127,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         centerTitle: true,
       ),
       body: ListView.builder(
+        padding: EdgeInsets.all(15.0),
         itemCount: favorites.length,
         itemBuilder: (context, index) {
           final favorite = favorites[index];
@@ -134,8 +135,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           return Column(
             children: [
               Container(
+
                 height: 150.0,
-                color: Colors.green[100],
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                  color: Colors.green[100],
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -148,7 +153,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           clipBehavior: Clip.hardEdge,
                           decoration: const BoxDecoration(shape: BoxShape.circle),
                           child: Image.network(
-                            constructImageUrlWithoutSlash(favorite['image']?.substring(4) ?? ''),
+                            constructImageUrlWithoutSlash(favorite['image'] ?? ''),
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(Icons.broken_image),

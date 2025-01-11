@@ -153,7 +153,7 @@ class ShowBox extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StoreProductsScreen(storeId: id!),
+              builder: (context) => StoreProductsScreen(storeId: id!,storeName: name!,),
             ),
           );
         }

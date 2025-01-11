@@ -148,7 +148,7 @@ class OrderItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap, // Trigger the onTap callback when the item is tapped
       child: Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(60.0),
         decoration: BoxDecoration(
           color: Colors.green[100],
           borderRadius: BorderRadius.circular(12.0),

@@ -31,7 +31,7 @@ class _CardScreenState extends State<CardScreen> {
           'Content-Type': 'application/json',
         },
       );
-      if (response.statusCode == 200 ||response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         // print("API Response: $data"); // Debugging: Print the response
 
@@ -40,20 +40,20 @@ class _CardScreenState extends State<CardScreen> {
           print(cartItems);
           totalPrice = calculateTotalPrice(cartItems);
         });
-
       } else {
         print("Failed to load cart items. Status Code: ${response.statusCode}");
         throw Exception('Failed to load cart items');
       }
     } catch (e) {
-     print(e);
+      print(e);
     }
   }
 
   double calculateTotalPrice(List<Map<String, dynamic>> items) {
     return items.fold(0.0, (sum, item) {
       final product = item['product'];
-      final price = double.parse(product['price'].toString()); // Convert price to double
+      final price =
+          double.parse(product['price'].toString()); // Convert price to double
       final quantity = item['quantity'];
       return sum + (price * quantity);
     });
@@ -162,7 +162,8 @@ class _CardScreenState extends State<CardScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Buy Items'),
-        content: const Text('Are you sure you want to buy all items in the cart?'),
+        content:
+            const Text('Are you sure you want to buy all items in the cart?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -205,78 +206,88 @@ class _CardScreenState extends State<CardScreen> {
             child: cartItems.isEmpty
                 ? const Center(child: Text("Your cart is empty")) // Fallback UI
                 : ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                final product = item['product']; // Access the product object
-                return Column(
-                  children: [
-                    Container(
-                      height: 150.0,
-                      color: Colors.green[100],
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    padding: EdgeInsets.all(15.0),
+                    itemCount: cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = cartItems[index];
+                      final product =
+                          item['product']; // Access the product object
+                      return Column(
                         children: [
-                          Expanded(
-                            flex: 2,
-                            child: Center(
-                              child: Container(
-                                width: 80.0,
-                                height: 80.0,
-                                clipBehavior: Clip.hardEdge,
-                                decoration: const BoxDecoration(shape: BoxShape.circle),
-                                child: Image.network(
-                                  product['image'], // Use product['image'] instead of product['image_url']
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                          Container(
+                            height: 150.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                              color: Colors.green[100],
                             ),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Column(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  product['name'], // Use product['name']
-                                  style: const TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                    child: Container(
+                                      width: 80.0,
+                                      height: 80.0,
+                                      clipBehavior: Clip.hardEdge,
+                                      decoration: const BoxDecoration(
+                                          shape: BoxShape.circle),
+                                      child: Image.network(
+                                        product['image'],
+                                        // Use product['image'] instead of product['image_url']
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 8.0),
-                                Text(
-                                  'Quantity: ${item['quantity']}', // Use item['quantity']
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
+                                Expanded(
+                                  flex: 4,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        product['name'], // Use product['name']
+                                        style: const TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      Text(
+                                        'Quantity: ${item['quantity']}',
+                                        // Use item['quantity']
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Price: \$${product['price']}',
+                                        // Use product['price']
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  'Price: \$${product['price']}', // Use product['price']
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
+                                Expanded(
+                                  flex: 1,
+                                  child: IconButton(
+                                    onPressed: () => _showDeleteDialog(index),
+                                    icon: const Icon(Icons.delete),
+                                    color: Colors.red,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: IconButton(
-                              onPressed: () => _showDeleteDialog(index),
-                              icon: const Icon(Icons.delete),
-                              color: Colors.red,
-                            ),
-                          ),
+                          const SizedBox(height: 10.0),
                         ],
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                  ],
-                );
-              },
-            ),
+                      );
+                    },
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),

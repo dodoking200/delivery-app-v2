@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -52,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const MainScreen()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
         print('Success: ${response.body}');
       } else {
@@ -89,37 +87,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final locationController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final ImagePicker _picker = ImagePicker();
-  File? _selectedImage;
-  Future<void> _pickImage() async {
-    try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-        });
-        print("Image Path: ${_selectedImage!.path}"); // Debugging statement
-      } else {
-        print("No image selected");
-      }
-    } catch (e) {
-      print("Error while picking image: $e");
-    }
-  }
-
+  // final ImagePicker _picker = ImagePicker();
+  // File? _selectedImage;
+  // Future<void> _pickImage() async {
+  //   try {
+  //     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //
+  //     if (image != null) {
+  //       setState(() {
+  //         _selectedImage = File(image.path);
+  //       });
+  //       print("Image Path: ${_selectedImage!.path}"); // Debugging statement
+  //     } else {
+  //       print("No image selected");
+  //     }
+  //   } catch (e) {
+  //     print("Error while picking image: $e");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFFFFF950),
-          title: const Center(
-              child: Text(
-            'login',
+          backgroundColor: Colors.yellow,
+          title: Text(
+            'Register',
             style: TextStyle(
                 color: Colors.grey, fontSize: 30.0, letterSpacing: 7.0),
-          )),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
@@ -128,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  imageProfile(),
+                  // imageProfile(),
                   const SizedBox(
                     height: 30.0,
                   ),
@@ -326,7 +322,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(16.0)),
                     ),
                     child: MaterialButton(
-                      child: const Text('Submit'),
+                      child: const Text('Submit',
+                          style: TextStyle(color: Colors.white)),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           sendPostRequest();
@@ -344,40 +341,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Container(),
         ));
   }
-  Widget imageProfile() {
-    return Center(
-      child: GestureDetector(
-        onTap: _pickImage, // Trigger image picking when tapped
-        child: Container(
-          width: 210, // Circle container width
-          height: 210, // Circle container height
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.black, // Border color
-              width: 1.0, // Border width
-            ),
-          ),
-          child: _selectedImage == null
-              ? const CircleAvatar(
-            radius: 100, // CircleAvatar size
-            backgroundColor: Color(0xFFA4FDAA), // Green background
-            child: Icon(
-              Icons.person, // Default icon when no image is selected
-              size: 100, // Icon size
-              color: Colors.white, // Icon color
-            ),
-          )
-              : ClipOval(
-            child: Image.file(
-              _selectedImage!, // Ensure the selected file is loaded
-              width: 210, // Image width matches container
-              height: 210, // Image height matches container
-              fit: BoxFit.cover, // Ensures image covers the circle
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+// Widget imageProfile() {
+//   return Center(
+//     child: GestureDetector(
+//       onTap: _pickImage, // Trigger image picking when tapped
+//       child: Container(
+//         width: 210, // Circle container width
+//         height: 210, // Circle container height
+//         decoration: BoxDecoration(
+//           shape: BoxShape.circle,
+//           border: Border.all(
+//             color: Colors.black, // Border color
+//             width: 1.0, // Border width
+//           ),
+//         ),
+//         child: _selectedImage == null
+//             ? const CircleAvatar(
+//           radius: 100, // CircleAvatar size
+//           backgroundColor: Color(0xFFA4FDAA), // Green background
+//           child: Icon(
+//             Icons.person, // Default icon when no image is selected
+//             size: 100, // Icon size
+//             color: Colors.white, // Icon color
+//           ),
+//         )
+//             : ClipOval(
+//           child: Image.file(
+//             _selectedImage!, // Ensure the selected file is loaded
+//             width: 210, // Image width matches container
+//             height: 210, // Image height matches container
+//             fit: BoxFit.cover, // Ensures image covers the circle
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
 }

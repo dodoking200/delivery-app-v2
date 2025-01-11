@@ -12,22 +12,24 @@ final _formKey = GlobalKey<FormState>();
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
-
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool _isDriver = false;
   bool _obscureText = true;
+
   Future<void> sendPostRequest() async {
     // Define the URL of your API
     final url = Uri.parse(constructImageUrl('api/login'));
 
     // Define the headers
     final headers = {
-      'Content-Type': 'application/json', // Ensures you're sending JSON
-      'Authorization': 'Bearer your_token_here', // Replace with your actual token
+      'Content-Type': 'application/json',
+      // Ensures you're sending JSON
+      'Authorization': 'Bearer your_token_here',
+      // Replace with your actual token
     };
 
     // Define the body (if you're sending data)
@@ -49,15 +51,17 @@ class _LoginScreenState extends State<LoginScreen> {
         // Navigate to the main screen
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const MainScreen()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
 
         // Save the token securely using the static method
-        String token = jsonDecode(response.body)['token'].toString(); // Ensure token is a string
+        String token = jsonDecode(response.body)['token']
+            .toString(); // Ensure token is a string
         await TokenSecureStorage.saveToken(token);
 
         // Save user data
-        Map<String, dynamic> userData = jsonDecode(response.body)['user']; // Assuming the API returns user data
+        Map<String, dynamic> userData = jsonDecode(
+            response.body)['user']; // Assuming the API returns user data
         await TokenSecureStorage.saveUserData(userData);
 
         print('Success: $token');
@@ -68,7 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Error'),
-              content: Text('Failed with status: ${response.statusCode}\nResponse: ${response.body}'),
+              content: Text(
+                  'Failed with status: ${response.statusCode}\nResponse: ${response.body}'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('OK'),
@@ -108,28 +113,47 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
-
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.yellow,
-        title: const Center(
-          child: Text(
+          backgroundColor: Colors.yellow,
+          title: Text(
             'Login',
             style: TextStyle(
                 color: Colors.grey, fontSize: 30.0, letterSpacing: 7.0),
           ),
-        ),
-      ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _isDriver ? 'Driver' : 'User',
+                  style: TextStyle(
+                    color: _isDriver ? Colors.green : Colors.grey,
+                  ),
+                ),
+                Switch(
+                  value: _isDriver,
+                  onChanged: (value) {
+                    setState(() {
+                      _isDriver = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                  inactiveThumbColor: Colors.grey,
+                ),
+              ],
+            ),
+          ]),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20.0,40.0,20.0,40.0),
+          padding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
           child: Form(
-            key: _formKey,  // Use the form key here
+            key: _formKey, // Use the form key here
             child: Column(
               children: [
                 const Center(
@@ -179,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20.0,
+                  height: 15.0,
                 ),
                 TextFormField(
                   controller: passwordController,
@@ -216,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        Icons.visibility ,
+                        Icons.visibility,
                         color: _obscureText ? Colors.grey : Colors.green,
                       ),
                       onPressed: () {
@@ -226,25 +250,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-
                 ),
                 const SizedBox(
                   height: 30.0,
                 ),
                 Container(
                   height: 40.0,
-
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.all(Radius.circular(16.0)),
                   ),
                   child: MaterialButton(
-                    child: const Text('Sign in'),
+                    child: const Text('Sign in',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         sendPostRequest();
-
                       }
                     },
                   ),
@@ -265,11 +287,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: const Text('Register now'),
-                      ),TextButton(
+                      ),
+                      TextButton(
                         onPressed: () {
                           Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => const MainScreen()),
-                                (Route<dynamic> route) => false,
+                            MaterialPageRoute(
+                                builder: (context) => const MainScreen()),
+                            (Route<dynamic> route) => false,
                           );
                         },
                         child: const Text('Skip'),
@@ -282,10 +306,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color:  Colors.yellow,
-        child: Container()
-      ),
+      bottomNavigationBar:
+          BottomAppBar(color: Colors.yellow, child: Container()),
     );
   }
 }

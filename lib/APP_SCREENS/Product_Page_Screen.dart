@@ -26,9 +26,9 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
 
   Future<void> fetchProductData() async {
     try {
-      String url =constructImageUrl('api/product/${widget.productId}');
+      String url = constructImageUrl('api/product/${widget.productId}');
       final response = await http.get(
-        Uri.parse( url),
+        Uri.parse(url),
       );
 
       if (response.statusCode == 200) {
@@ -42,6 +42,36 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       }
     } catch (e) {
       print('Error fetching product: $e');
+    }
+  }
+
+  Future<void> buyProduct(int productId, int quantity) async {
+    final token = await TokenSecureStorage.getToken();
+    if (token == null) {
+      print('No token found');
+      return;
+    }
+
+    final url = Uri.parse(constructImageUrl('api/product/buy/$productId'));
+    final body = jsonEncode({
+      'quantity': quantity,
+    });
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      print('Product bought successfully');
+      // Handle successful purchase, e.g., show a success message or navigate to another screen
+    } else {
+      print('Failed to buy product: ${response.statusCode}');
+      // Handle error, e.g., show an error message
     }
   }
 
@@ -124,9 +154,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                   child: IconButton(
                     onPressed: () {
                       setState(() {
-
-                          count++;
-
+                        count++;
                       });
                     },
                     icon: const Icon(Icons.add),
@@ -146,7 +174,9 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
               ),
               child: MaterialButton(
                 child: const Text('Buy', style: TextStyle(color: Colors.white)),
-                onPressed: () {},
+                onPressed: () {
+                  buyProduct(product['id'], count);
+                },
               ),
             ),
           ),
