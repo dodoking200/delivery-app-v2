@@ -68,6 +68,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
 
     if (response.statusCode == 200) {
       print('Product bought successfully');
+      print(response.body);
       // Handle successful purchase, e.g., show a success message or navigate to another screen
     } else {
       print('Failed to buy product: ${response.statusCode}');

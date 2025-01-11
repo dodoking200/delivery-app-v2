@@ -92,6 +92,14 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
 
+  // Function to handle the refresh action
+  Future<void> _refreshData() async {
+    setState(() {
+      isLoading = true; // Show loading indicator while refreshing
+    });
+    await fetchOrders(); // Fetch orders again
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -100,26 +108,29 @@ class _OrderScreenState extends State<OrderScreen> {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          final order = orders[index];
-          return Column(
-            children: [
-              OrderItem(
-                orderId: order['id'].toString(),
-                status: order['status'],
-                deliveryAddress: order['delivery_address'],
-                bill: order['bill'],
-                createdAt: order['created_at'],
-                onTap: () => fetchOrderItems(order['id']), // Fetch order items when tapped
-              ),
-              const SizedBox(height: 10.0),
-            ],
-          );
-        },
+    return RefreshIndicator(
+      onRefresh: _refreshData, // Triggered when the user pulls down
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView.builder(
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            final order = orders[index];
+            return Column(
+              children: [
+                OrderItem(
+                  orderId: order['id'].toString(),
+                  status: order['status'],
+                  deliveryAddress: order['delivery_address'],
+                  bill: order['bill'],
+                  createdAt: order['created_at'],
+                  onTap: () => fetchOrderItems(order['id']), // Fetch order items when tapped
+                ),
+                const SizedBox(height: 10.0),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
