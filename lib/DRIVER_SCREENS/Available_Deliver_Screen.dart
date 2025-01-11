@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import '../main.dart';
 
-
 class AvailableDeliverScreen extends StatefulWidget {
   const AvailableDeliverScreen({super.key});
 
@@ -15,16 +14,19 @@ class AvailableDeliverScreen extends StatefulWidget {
 class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
   List<dynamic> _orders = [];
   bool _isLoading = true;
+  int _currentPage = 1;
+  bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchCurrentOrders();
+    _fetchOrders();
   }
 
-  Future<void> _fetchCurrentOrders() async {
-    // Use constructImageUrl to build the URL
-    final url = constructImageUrl('api/orders/driver/current');
+  Future<void> _fetchOrders() async {
+    if (!_hasMore) return;
+
+    final url = constructImageUrl('api/orders?page=$_currentPage');
 
     final response = await http.get(
       Uri.parse(url),
@@ -34,15 +36,28 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
     );
 
     if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List<dynamic> newOrders = data['orders']['data'];
+
       setState(() {
-        _orders = json.decode(response.body);
+        _orders.addAll(newOrders);
         _isLoading = false;
+        _hasMore = data['orders']['next_page_url'] != null;
       });
     } else {
       setState(() {
         _isLoading = false;
       });
       throw Exception('Failed to load orders');
+    }
+  }
+
+  void _loadMore() {
+    if (_hasMore) {
+      setState(() {
+        _currentPage++;
+      });
+      _fetchOrders();
     }
   }
 
@@ -54,8 +69,16 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
           : _orders.isEmpty
           ? const Center(child: Text('No orders available'))
           : ListView.builder(
-        itemCount: _orders.length,
+        itemCount: _orders.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {
+          if (index == _orders.length) {
+            return Center(
+              child: ElevatedButton(
+                onPressed: _loadMore,
+                child: const Text('Load More'),
+              ),
+            );
+          }
           final order = _orders[index];
           return ListTile(
             title: Text('Order ID: ${order['id']}'),

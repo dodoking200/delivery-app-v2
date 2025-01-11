@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:test1/LOGIN/login_screen.dart';
 import 'package:test1/Token_Secure_Storage.dart';
 
+import 'DRIVER_SCREENS/DMAIN_SCREEN.dart';
 import 'MAIN/main_screen.dart';
+
 //http://192.168.237.103:8000/ is my mobile (xiamoi)
+
+
 String constructImageUrl(String relativePath) {
   const baseUrl = 'http://192.168.1.109:8000/';
   return baseUrl + relativePath;
 }
+
 String constructImageUrlWithoutSlash(String relativePath) {
   const baseUrl = 'http://192.168.1.109:8000';
   return baseUrl + relativePath;
@@ -15,6 +20,10 @@ String constructImageUrlWithoutSlash(String relativePath) {
 
 Future<bool> hasToken() async {
   return await TokenSecureStorage.hasToken();
+}
+
+Future<bool> isDriver() async {
+  return await TokenSecureStorage.isDriver();
 }
 
 void main() {
@@ -31,17 +40,29 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<bool>(
         future: hasToken(),
         builder: (context, snapshot) {
-          // Check if the Future is complete
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Show a loading indicator while waiting for the Future
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          // If the Future is resolved
           if (snapshot.hasData && snapshot.data == true) {
-            return const MainScreen(); // User is authenticated
+            return FutureBuilder<bool>(
+              future: isDriver(),
+              builder: (context, driverSnapshot) {
+                if (driverSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (driverSnapshot.hasData && driverSnapshot.data == true) {
+                  return const DMainScreen(); // User is a driver
+                } else {
+                  return const MainScreen(); // User is not a driver
+                }
+              },
+            );
           } else {
             return const LoginScreen(); // User is not authenticated
           }

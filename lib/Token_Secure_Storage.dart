@@ -60,4 +60,17 @@ class TokenSecureStorage {
     print(token != null && token.isNotEmpty);
     return token != null && token.isNotEmpty;
   }
+
+  // Save driver flag
+  static Future<void> saveIsDriver(bool isDriver) async {
+    await _secureStorage.write(key: 'isDriver', value: isDriver.toString());
+  }
+
+  // Retrieve driver flag
+  static Future<bool> isDriver() async {
+    String? isDriverString = await _secureStorage.read(key: 'isDriver');
+    return isDriverString == 'true';
+  }
+
 }
+

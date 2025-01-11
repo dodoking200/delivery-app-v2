@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../DRIVER_SCREENS/DMAIN_SCREEN.dart';
 import 'Register_Screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -21,59 +22,57 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
 
   Future<void> sendPostRequest() async {
-    // Define the URL of your API
-    final url = Uri.parse(constructImageUrl('api/login'));
+    final url = Uri.parse(_isDriver ? constructImageUrl('api/driver/login') : constructImageUrl('api/login'));
 
-    // Define the headers
     final headers = {
       'Content-Type': 'application/json',
-      // Ensures you're sending JSON
-      'Authorization': 'Bearer your_token_here',
-      // Replace with your actual token
     };
 
-    // Define the body (if you're sending data)
     final body = jsonEncode({
-      'mobile_number': phoneController.text,
+      'phone': phoneController.text,
       'password': passwordController.text,
     });
 
     try {
-      // Send POST request
       final response = await http.post(
         url,
         headers: headers,
         body: body,
       );
 
-      // Check the response
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Navigate to the main screen
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-          (Route<dynamic> route) => false,
-        );
-
-        // Save the token securely using the static method
-        String token = jsonDecode(response.body)['token']
-            .toString(); // Ensure token is a string
+        String token = jsonDecode(response.body)['token'].toString();
+        token = token.substring(4);
         await TokenSecureStorage.saveToken(token);
 
         // Save user data
-        Map<String, dynamic> userData = jsonDecode(
-            response.body)['user']; // Assuming the API returns user data
+        Map<String, dynamic> userData = jsonDecode(response.body)['driver'] ?? jsonDecode(response.body)['user'];
         await TokenSecureStorage.saveUserData(userData);
+
+        // Save the driver flag
+        await TokenSecureStorage.saveIsDriver(_isDriver);
+
+        // Navigate to the appropriate screen
+        if (_isDriver) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const DMainScreen()),
+                (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+                (Route<dynamic> route) => false,
+          );
+        }
 
         print('Success: $token');
       } else {
-        // Show an alert with the error message
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Error'),
-              content: Text(
-                  'Failed with status: ${response.statusCode}\nResponse: ${response.body}'),
+              content: Text('Failed with status: ${response.statusCode}\nResponse: ${response.body}'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('OK'),
@@ -90,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen> {
         print('Response: ${response.body}');
       }
     } catch (e) {
-      // Show an alert for the exception
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -123,8 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.yellow,
           title: Text(
             'Login',
-            style: TextStyle(
-                color: Colors.grey, fontSize: 30.0, letterSpacing: 7.0),
+            style: TextStyle(color: Colors.grey, fontSize: 30.0, letterSpacing: 7.0),
           ),
           actions: [
             Row(
@@ -262,8 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(16.0)),
                   ),
                   child: MaterialButton(
-                    child: const Text('Sign in',
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text('Sign in', style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         sendPostRequest();
@@ -291,9 +287,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => const MainScreen()),
-                            (Route<dynamic> route) => false,
+                            MaterialPageRoute(builder: (context) => const MainScreen()),
+                                (Route<dynamic> route) => false,
                           );
                         },
                         child: const Text('Skip'),
@@ -306,8 +301,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-      bottomNavigationBar:
-          BottomAppBar(color: Colors.yellow, child: Container()),
+      bottomNavigationBar: BottomAppBar(color: Colors.yellow, child: Container()),
     );
   }
 }
