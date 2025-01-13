@@ -101,22 +101,45 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _orders.isEmpty
           ? const Center(child: Text('No delivered orders available'))
-          : ListView.builder(
-        itemCount: _orders.length,
-        itemBuilder: (context, index) {
-          final order = _orders[index];
-          return ListTile(
-            title: Text('Order ID: ${order['id']}'),
-            subtitle: Text('Status: ${order['status']}'),
-            trailing: IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () {
-                _orderdelivered(order['id']);
-              },
-            ),
-          );
+          : GestureDetector(
+        onDoubleTap: () async {
+          setState(() {
+            _isLoading = true; // Show loading indicator
+            _orders = []; // Clear the existing orders
+          });
+          await _fetchCurrentOrders(); // Fetch the latest orders
         },
-      ),
+            child: ListView.builder(
+                    padding: EdgeInsets.all(15.0),
+                    itemCount: _orders.length,
+                    itemBuilder: (context, index) {
+            final order = _orders[index];
+            return Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                    color: Colors.green[100],
+                  ),
+                  child: ListTile(
+                    title: Text('Order ID: ${order['id']}'),
+                    subtitle: Text('Status: ${order['status']}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.check),
+                      onPressed: () {
+                        _orderdelivered(order['id']);
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                )
+              ],
+            );
+                    },
+                  ),
+          ),
     );
   }
 }

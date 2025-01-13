@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import '../Token_Secure_Storage.dart';
 import '../main.dart';
+import '../MAIN/Order_Screen.dart';
 
 class AvailableDeliverScreen extends StatefulWidget {
   const AvailableDeliverScreen({super.key});
@@ -88,6 +89,39 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
 
     }
   }
+  Future<void> fetchOrderItems(int orderId) async {
+    try {
+      final tokenValue = await TokenSecureStorage.getToken();
+      if (tokenValue == null) {
+        print('Token is null');
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(constructImageUrl('api/order/$orderId/items')),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenValue',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        // Navigate to a new screen to display the order items
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderItemsScreen(orderItems: jsonData['order']['items']),
+          ),
+        );
+      } else {
+        print('Failed to fetch order items. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching order items: $e');
+    }
+  }
 
   void _loadMore() {
     if (_hasMore) {
@@ -100,34 +134,74 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _orders.isEmpty
-          ? const Center(child: Text('No orders available'))
-          : ListView.builder(
-        itemCount: _orders.length + (_hasMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == _orders.length) {
-            return Center(
-              child: ElevatedButton(
-                onPressed: _loadMore,
-                child: const Text('Load More'),
+    return GestureDetector(
+      onDoubleTap: () async {
+        setState(() {
+          _currentPage = 1; // Reset the page to 1
+          _orders = []; // Clear the existing orders
+          _isLoading = true; // Set loading to true to show the loading indicator
+          _hasMore = true; // Reset the hasMore flag
+        });
+        await _fetchOrders(); // Fetch the orders again
+      },
+      child: Scaffold(
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _orders.isEmpty
+            ? const Center(child: Text('No orders available'))
+            : ListView.builder(
+          padding: EdgeInsets.all(15.0),
+          itemCount: _orders.length + (_hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == _orders.length) {
+              return Center(
+                child: ElevatedButton(
+                  onPressed: _loadMore,
+                  child: const Text('Load More'),
+                ),
+              );
+            }
+            final order = _orders[index];
+            return GestureDetector(
+              onTap: () => fetchOrderItems(order['id']),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                      color: Colors.green[100],
+                    ),
+                    child: ListTile(
+                      title: Text('Order ID: ${order['id']}'),
+                      subtitle: Text('Status: ${order['status']}'),
+                      trailing: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                          color: Colors.blue,
+                        ),
+                        child: IconButton(
+                          icon: const Text("accept",
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _acceptOrder(order['id']);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  )
+                ],
               ),
             );
-          }
-          final order = _orders[index];
-          return ListTile(
-            title: Text('Order ID: ${order['id']}'),
-            subtitle: Text('Status: ${order['status']}'),
-            trailing: IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () {
-                _acceptOrder(order['id']);
-              },
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

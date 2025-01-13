@@ -100,7 +100,7 @@ class _storesScreenState extends State<storesScreen> {
       sma.add(
         ShowTwoBoxes(
           name1: newStores.last['name'],
-          image1: constructImageUrl(newStores.last['image']),
+          image1: constructImageUrlWithoutSlash(newStores.last['image']),
           id1: newStores.last['id'],
         ),
       );

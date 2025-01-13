@@ -100,26 +100,35 @@ class _OrderScreenState extends State<OrderScreen> {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          final order = orders[index];
-          return Column(
-            children: [
-              OrderItem(
-                orderId: order['id'].toString(),
-                status: order['status'],
-                deliveryAddress: order['delivery_address'],
-                bill: order['bill'],
-                createdAt: order['created_at'],
-                onTap: () => fetchOrderItems(order['id']), // Fetch order items when tapped
-              ),
-              const SizedBox(height: 10.0),
-            ],
-          );
-        },
+    return GestureDetector(
+      onDoubleTap: () async {
+        setState(() {
+          isLoading = true; // Show loading indicator
+          orders = []; // Clear the existing orders
+        });
+        await fetchOrders(); // Fetch the latest orders
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView.builder(
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            final order = orders[index];
+            return Column(
+              children: [
+                OrderItem(
+                  orderId: order['id'].toString(),
+                  status: order['status'],
+                  deliveryAddress: order['delivery_address'],
+                  bill: order['bill'],
+                  createdAt: order['created_at'],
+                  onTap: () => fetchOrderItems(order['id']), // Fetch order items when tapped
+                ),
+                const SizedBox(height: 10.0),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

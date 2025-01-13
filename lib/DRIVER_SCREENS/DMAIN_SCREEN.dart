@@ -37,8 +37,8 @@ class _DMainScreenState extends State<DMainScreen> {
   }
 
   List<Widget> screens = [
-    const AvailableDeliverScreen(),
-    const DeliveredScreen(),
+    AvailableDeliverScreen(),
+    DeliveredScreen(),
   ];
   List<String> Titles = [
     "Available page",
@@ -66,13 +66,13 @@ class _DMainScreenState extends State<DMainScreen> {
         children: screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket, color: Colors.black),
+            icon: Icon(_selectedIndex == 0?Icons.shopping_basket:Icons.shopping_basket_outlined, color: Colors.black),
             label: 'Available',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping, color: Colors.black),
+            icon: Icon(_selectedIndex == 1?Icons.local_shipping:Icons.local_shipping_outlined, color: Colors.black),
             label: 'Delivered',
           ),
         ],
