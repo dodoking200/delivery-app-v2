@@ -39,6 +39,7 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
     final response = await http.get(
       Uri.parse(url),
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token', // Use the retrieved token
       },
     );
@@ -57,6 +58,42 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
     }
   }
 
+
+  Future<void> _orderdelivered(int orderId) async {
+
+    String? token = await TokenSecureStorage.getToken();
+    final url = constructImageUrl('api/orders/status/${orderId}');
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${token}',
+      },
+      body: json.encode({
+        'status': 'completed',
+      }),
+
+    );
+
+    if (response.statusCode == 200) {
+      // Update the order status in the local list
+      print(response.body);
+      setState(() {
+        final orderIndex = _orders.indexWhere((order) => order['id'] == orderId);
+        if (orderIndex != -1) {
+          _orders[orderIndex]['status'] = 'delivered';
+        }
+      });
+
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to accept order');
+
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +108,12 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
           return ListTile(
             title: Text('Order ID: ${order['id']}'),
             subtitle: Text('Status: ${order['status']}'),
-            // Add more details as needed
+            trailing: IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                _orderdelivered(order['id']);
+              },
+            ),
           );
         },
       ),

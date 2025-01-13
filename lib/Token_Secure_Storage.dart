@@ -17,6 +17,22 @@ class TokenSecureStorage {
     return await _secureStorage.read(key: 'token');
   }
 
+  static Future<void> removeTokendriver() async {
+    final url = Uri.parse(constructImageUrl('api/driver/logout')); // Ensure this matches your API endpoint
+    String? token = await _secureStorage.read(key: 'token');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    final response = await http.post(
+      url,
+      headers: headers,
+    );
+    print("Logout Response: ${response.body}");
+
+    await _secureStorage.delete(key: 'token');
+  }
+
   // Remove token securely
   static Future<void> removeToken() async {
     final url = Uri.parse(constructImageUrl('api/logout'));

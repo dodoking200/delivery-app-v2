@@ -33,7 +33,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
-          favorites = jsonData; // The API returns a list of products directly
+          favorites = jsonData['products']; // The API returns a list of products directly
         });
         print('Favorites: ${response.body}');
       } else {

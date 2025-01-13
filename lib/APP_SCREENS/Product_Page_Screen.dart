@@ -76,13 +76,47 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
     }
   }
 
+  Future<void> favoriteProduct(int productId) async {
+    final token = await TokenSecureStorage.getToken();
+    if (token == null) {
+      print('No token found');
+      return;
+    }
+
+    final url = Uri.parse(constructImageUrl('api/users/favorite/$productId'));
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Product favorited successfully');
+      // Optionally, you can show a snackbar or a dialog to inform the user
+    } else {
+      print('Failed to favorite product: ${response.statusCode}');
+      // Handle error, e.g., show an error message
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amberAccent,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart))
+          IconButton(
+            onPressed: () {
+              favoriteProduct(product['id']);
+            },
+            icon: const Icon(Icons.favorite_border),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.shopping_cart),
+          ),
         ],
       ),
       body: isLoading

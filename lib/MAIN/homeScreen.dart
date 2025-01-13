@@ -27,11 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse(constructImageUrl('api/products')));
+      final response = await http.get(Uri.parse(constructImageUrl('api/products/relevant')));
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
-          products = jsonData['data'];
+          products = jsonData['RelevantProducts'];
         });
       } else {
         print('Failed to fetch products');
@@ -43,14 +43,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchData2() async {
     try {
-      final response = await http.get(Uri.parse(constructImageUrl('api/stores')));
+      final response = await http.get(Uri.parse(constructImageUrl('api/stores/relevant')));
       if (response.statusCode == 200) {
+        print(response.body);
         final jsonData = jsonDecode(response.body);
         setState(() {
-          stores = jsonData['data'];
+          stores = jsonData['RelevantStores'];
         });
       } else {
         print('Failed to fetch stores');
+        print(response.body);
       }
     } catch (e) {
       print('Error fetching stores: $e');

@@ -106,21 +106,21 @@ class _MainScreenState extends State<MainScreen> {
         children: screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.black),
+            icon: Icon(_selectedIndex == 0?Icons.home:Icons.home_outlined, color: Colors.black),
             label: 'home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.store, color: Colors.black),
+            icon: Icon(_selectedIndex == 1?Icons.store:Icons.store_outlined, color: Colors.black),
             label: 'Stores',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket, color: Colors.black),
+            icon: Icon(_selectedIndex == 2?Icons.shopping_basket:Icons.shopping_basket_outlined, color: Colors.black),
             label: 'Products',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping, color: Colors.black),
+            icon: Icon(_selectedIndex == 3?Icons.local_shipping:Icons.local_shipping_outlined, color: Colors.black),
             label: 'Orders',
           ),
         ],

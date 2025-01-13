@@ -28,8 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
       'Content-Type': 'application/json',
     };
 
-    final body = jsonEncode({
+    final body = _isDriver ?jsonEncode({
       'phone': phoneController.text,
+      'password': passwordController.text,
+    }):jsonEncode({
+      'mobile_number': phoneController.text,
       'password': passwordController.text,
     });
 
@@ -42,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         String token = jsonDecode(response.body)['token'].toString();
-        token = token.substring(4);
+        // token = token.substring(4);
         await TokenSecureStorage.saveToken(token);
 
         // Save user data

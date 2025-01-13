@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../Token_Secure_Storage.dart';
 import '../main.dart';
 
 class AvailableDeliverScreen extends StatefulWidget {
@@ -17,6 +18,10 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
   int _currentPage = 1;
   bool _hasMore = true;
 
+
+
+
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +36,7 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
     final response = await http.get(
       Uri.parse(url),
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer YOUR_DRIVER_TOKEN', // Replace with actual token
       },
     );
@@ -49,6 +55,37 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
         _isLoading = false;
       });
       throw Exception('Failed to load orders');
+    }
+  }
+
+  Future<void> _acceptOrder(int orderId) async {
+
+    String? token = await TokenSecureStorage.getToken();
+    final url = constructImageUrl('api/orders/accept/${orderId}');
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${token}',
+      },
+
+    );
+
+    if (response.statusCode == 200) {
+      // Update the order status in the local list
+      print(response.body);
+      setState(() {
+        final orderIndex = _orders.indexWhere((order) => order['id'] == orderId);
+        if (orderIndex != -1) {
+          _orders[orderIndex]['status'] = 'accepted';
+        }
+      });
+
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to accept order');
+
     }
   }
 
@@ -83,7 +120,12 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
           return ListTile(
             title: Text('Order ID: ${order['id']}'),
             subtitle: Text('Status: ${order['status']}'),
-            // Add more details as needed
+            trailing: IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                _acceptOrder(order['id']);
+              },
+            ),
           );
         },
       ),
