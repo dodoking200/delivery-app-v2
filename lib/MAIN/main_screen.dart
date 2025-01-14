@@ -87,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: const Icon(Icons.shopping_cart, color: Colors.black),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const CardScreen()),
+                MaterialPageRoute(builder: (context) => const CartScreen()),
               );
             },
           ),

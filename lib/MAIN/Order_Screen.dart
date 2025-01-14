@@ -100,8 +100,8 @@ class _OrderScreenState extends State<OrderScreen> {
       );
     }
 
-    return GestureDetector(
-      onDoubleTap: () async {
+    return RefreshIndicator(
+      onRefresh: () async {
         setState(() {
           isLoading = true; // Show loading indicator
           orders = []; // Clear the existing orders

@@ -101,8 +101,8 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _orders.isEmpty
           ? const Center(child: Text('No delivered orders available'))
-          : GestureDetector(
-        onDoubleTap: () async {
+          : RefreshIndicator(
+        onRefresh: () async {
           setState(() {
             _isLoading = true; // Show loading indicator
             _orders = []; // Clear the existing orders

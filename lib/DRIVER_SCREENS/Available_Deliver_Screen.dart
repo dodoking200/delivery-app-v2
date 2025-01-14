@@ -134,8 +134,8 @@ class _AvailableDeliverScreenState extends State<AvailableDeliverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onDoubleTap: () async {
+    return RefreshIndicator(
+      onRefresh: () async {
         setState(() {
           _currentPage = 1; // Reset the page to 1
           _orders = []; // Clear the existing orders
