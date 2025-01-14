@@ -233,7 +233,7 @@ class _CardScreenState extends State<CardScreen> {
                                       decoration: const BoxDecoration(
                                           shape: BoxShape.circle),
                                       child: Image.network(
-                                        product['image'],
+                                        constructImageUrlWithoutSlash(product['image']),
                                         // Use product['image'] instead of product['image_url']
                                         fit: BoxFit.cover,
                                       ),

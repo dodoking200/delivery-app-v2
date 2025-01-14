@@ -70,7 +70,7 @@ class _StoreProductsScreenState extends State<StoreProductsScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8), // Rounded edges for the image
                     child: Image.network(
-                      constructImageUrl(product['image']),
+                      constructImageUrlWithoutSlash(product['image']),
                       fit: BoxFit.cover, // Ensure the image covers the space
                       height: 100, // Set a fixed height for the image
                     ),

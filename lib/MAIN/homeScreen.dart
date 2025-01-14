@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           Image.network(
-                            constructImageUrl(store['image'] ?? ''),
+                            constructImageUrlWithoutSlash(store['image'] ?? ''),
                             height: 100,
                             width: 100,
                             fit: BoxFit.cover,
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         Image.network(
-                          constructImageUrl(product['image'] ?? ''),
+                          constructImageUrlWithoutSlash(product['image'] ?? ''),
                           height: 70,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),

@@ -9,12 +9,12 @@ import 'MAIN/main_screen.dart';
 
 
 String constructImageUrl(String relativePath) {
-  const baseUrl = 'http://127.0.0.1:8000/';
+  const baseUrl = 'http://127.20.10.7:8000/';
   return baseUrl + relativePath;
 }
 
 String constructImageUrlWithoutSlash(String relativePath) {
-  const baseUrl = 'http://127.0.0.1:8000';
+  const baseUrl = 'http://127.20.10.7:8000';
   return baseUrl + relativePath;
 }
 

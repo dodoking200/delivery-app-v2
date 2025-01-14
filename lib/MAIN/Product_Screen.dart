@@ -224,7 +224,7 @@ class ShowBox extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           children: [
             Image.network(
-              image!,
+              constructImageUrlWithoutSlash(image!),
               fit: BoxFit.cover,
               width: double.infinity,
               height: 200.0,

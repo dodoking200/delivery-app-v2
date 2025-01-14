@@ -131,7 +131,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(16.0)),
               ),
               child: Image.network(
-                product['image'],
+                constructImageUrlWithoutSlash(product['image']),
                 fit: BoxFit.cover,
                 width: 350.0,
                 height: 350.0,
