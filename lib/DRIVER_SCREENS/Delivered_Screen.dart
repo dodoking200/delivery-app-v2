@@ -58,9 +58,7 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
     }
   }
 
-
   Future<void> _orderdelivered(int orderId) async {
-
     String? token = await TokenSecureStorage.getToken();
     final url = constructImageUrl('api/orders/status/${orderId}');
 
@@ -73,26 +71,23 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
       body: json.encode({
         'status': 'completed',
       }),
-
     );
 
     if (response.statusCode == 200) {
       // Update the order status in the local list
       print(response.body);
       setState(() {
-        final orderIndex = _orders.indexWhere((order) => order['id'] == orderId);
+        final orderIndex =
+            _orders.indexWhere((order) => order['id'] == orderId);
         if (orderIndex != -1) {
           _orders[orderIndex]['status'] = 'delivered';
         }
       });
-
     } else {
       print(response.statusCode);
       throw Exception('Failed to accept order');
-
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -100,46 +95,47 @@ class _DeliveredScreenState extends State<DeliveredScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _orders.isEmpty
-          ? const Center(child: Text('No delivered orders available'))
-          : RefreshIndicator(
-        onRefresh: () async {
-          setState(() {
-            _isLoading = true; // Show loading indicator
-            _orders = []; // Clear the existing orders
-          });
-          await _fetchCurrentOrders(); // Fetch the latest orders
-        },
-            child: ListView.builder(
+              ? const Center(child: Text('No delivered orders available'))
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    setState(() {
+                      _isLoading = true; // Show loading indicator
+                      _orders = []; // Clear the existing orders
+                    });
+                    await _fetchCurrentOrders(); // Fetch the latest orders
+                  },
+                  child: ListView.builder(
                     padding: EdgeInsets.all(15.0),
                     itemCount: _orders.length,
                     itemBuilder: (context, index) {
-            final order = _orders[index];
-            return Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(14.0)),
-                    color: Colors.green[100],
-                  ),
-                  child: ListTile(
-                    title: Text('Order ID: ${order['id']}'),
-                    subtitle: Text('Status: ${order['status']}'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.check),
-                      onPressed: () {
-                        _orderdelivered(order['id']);
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                )
-              ],
-            );
+                      final order = _orders[index];
+                      return Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(14.0)),
+                              color: Colors.green[100],
+                            ),
+                            child: ListTile(
+                              title: Text('Order ID: ${order['id']}'),
+                              subtitle: Text('Status: ${order['status']}'),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.check),
+                                onPressed: () {
+                                  _orderdelivered(order['id']);
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          )
+                        ],
+                      );
                     },
                   ),
-          ),
+                ),
     );
   }
 }
